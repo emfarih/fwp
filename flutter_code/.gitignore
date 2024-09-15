@@ -1,0 +1,68 @@
+# Flutter/Dart/Pub related
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-deps
+.flutter-plugins-dep*
+.packages
+.pub/
+build/
+.idea/
+.vscode/
+*.iml
+
+# iOS related
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Flutter.podspec.json
+ios/Flutter/FlutterModule.podspec
+ios/Pods/
+ios/.symlinks/
+ios/Podfile.lock
+ios/Pods/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+
+# Android related
+android/.gradle/
+android/app/debug/
+android/app/profile/
+android/app/release/
+android/gradle/
+android/gradle-wrapper.jar
+android/gradle-wrapper.properties
+android/local.properties
+android/.idea/
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.pb.dart
+*.pbserver.dart
+
+# Miscellaneous
+*.log
+*.tmp
+*.swp
+
+# Coverage
+coverage/
+
+# Builds
+*.apk
+*.aab
+*.app
+*.dmg
+*.ipa
+*.msi
+*.zip
+
+# IDE files
+*.sublime-workspace
+*.sublime-project
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
