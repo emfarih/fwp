@@ -1,26 +1,44 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:html' as html;
 
 class TokenStorageService {
-  final _storage = const FlutterSecureStorage();
+  static const String _tokenKey = 'auth_token';
 
-  // Save the token securely
   Future<void> saveToken(String token) async {
-    print('TokenStorageService: saving Token $token');
     try {
-      await _storage.write(key: 'auth_token', value: token);
-      print('TokenStorageService: Token $token Saved successfully');
+      // Set cookie without flags for simplicity
+      html.window.document.cookie = '$_tokenKey=$token; Path=/';
+      print('TokenStorageService: Token saved successfully');
     } catch (e) {
-      print('An error occurred while saving the token: $e');
+      print('TokenStorageService: An error occurred while saving token: $e');
     }
   }
 
-  // Retrieve the token from secure storage
   Future<String?> getToken() async {
-    return await _storage.read(key: 'auth_token');
+    try {
+      final cookies = html.window.document.cookie?.split('; ') ?? [];
+      for (var cookie in cookies) {
+        final parts = cookie.split('=');
+        if (parts.length == 2 && parts[0] == _tokenKey) {
+          print('TokenStorageService: Token retrieved');
+          return parts[1];
+        }
+      }
+      print('TokenStorageService: Token is null');
+      return null;
+    } catch (e) {
+      print(
+          'TokenStorageService: An error occurred while retrieving token: $e');
+      return null;
+    }
   }
 
-  // Clear the token (e.g., on logout)
   Future<void> clearToken() async {
-    await _storage.delete(key: 'auth_token');
+    try {
+      html.window.document.cookie =
+          '$_tokenKey=; expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/';
+      print('TokenStorageService: Token cleared successfully');
+    } catch (e) {
+      print('TokenStorageService: An error occurred while clearing token: $e');
+    }
   }
 }
