@@ -10,12 +10,21 @@ class LoginUseCase {
 
   Future<bool> login(String username, String password) async {
     final token = await repository.authenticate(username, password);
+    print('LoginUseCase: Token $token');
+
     if (token != null) {
+      print(
+          'LoginUseCase: saving Token on tokenStorageService $tokenStorageService');
       await tokenStorageService.saveToken(token);
+      print(
+          'LoginUseCase: Token saved on tokenStorageService $tokenStorageService');
 
       // Check the role in the token
       final decodedToken = JwtDecoder.decode(token);
+      print('LoginUseCase: decodedToken $decodedToken');
+
       final roleId = decodedToken['role_id'];
+      print('LoginUseCase: roleId $roleId');
 
       // Here you can define which roles are allowed to access CLM list
       if (roleId == 2) {

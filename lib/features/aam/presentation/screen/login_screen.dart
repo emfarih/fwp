@@ -29,18 +29,50 @@ class LoginScreen extends StatelessWidget {
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () async {
-                // Call login and handle navigation
-                final success = await viewModel.login();
-                if (context.mounted) {
-                  if (success) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ChecklistListScreen()),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Login failed')),
+                final currentContext = context; // Capture the context
+
+                try {
+                  // Log login attempt
+                  print(
+                      'Attempting to login with username: ${viewModel.username}');
+
+                  // Attempt login
+                  final success = await viewModel.login();
+
+                  print('await viewModel.login() await passed');
+
+                  // Check if the widget is still mounted
+                  if (currentContext.mounted) {
+                    if (success) {
+                      // Log success and navigate on successful login
+                      print(
+                          'Login successful. Navigating to ChecklistListScreen.');
+                      Navigator.pushReplacement(
+                        currentContext,
+                        MaterialPageRoute(
+                            builder: (context) => const ChecklistListScreen()),
+                      );
+                    } else {
+                      // Log failure
+                      print('Login failed. Incorrect username or password.');
+                      ScaffoldMessenger.of(currentContext).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                              'Login failed. Incorrect username or password.'),
+                        ),
+                      );
+                    }
+                  }
+                } catch (e) {
+                  // Log the error
+                  print('An error occurred: ${e.toString()}');
+
+                  // Show Snackbar for error
+                  if (currentContext.mounted) {
+                    ScaffoldMessenger.of(currentContext).showSnackBar(
+                      SnackBar(
+                        content: Text('An error occurred: ${e.toString()}'),
+                      ),
                     );
                   }
                 }

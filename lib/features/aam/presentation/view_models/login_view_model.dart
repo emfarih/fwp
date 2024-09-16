@@ -11,6 +11,7 @@ class LoginViewModel extends ChangeNotifier {
 
   Future<bool> login() async {
     bool success = await _loginUseCase.login(username, password);
+    print('_loginUseCase await passed');
     notifyListeners();
     return success;
   }

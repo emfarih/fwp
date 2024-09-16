@@ -5,7 +5,13 @@ class TokenStorageService {
 
   // Save the token securely
   Future<void> saveToken(String token) async {
-    await _storage.write(key: 'auth_token', value: token);
+    print('TokenStorageService: saving Token $token');
+    try {
+      await _storage.write(key: 'auth_token', value: token);
+      print('TokenStorageService: Token $token Saved successfully');
+    } catch (e) {
+      print('An error occurred while saving the token: $e');
+    }
   }
 
   // Retrieve the token from secure storage
