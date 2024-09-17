@@ -1,8 +1,8 @@
 class Checklist {
   final int id;
-  final String location;
-  final DateTime inspectionDate;
-  final String inspectionType;
+  final String? location;
+  final DateTime? inspectionDate;
+  final String? inspectionType;
   final String? inspectorName;
   final int photoSlots;
   final List<ChecklistItem> checklistItems;
@@ -10,9 +10,9 @@ class Checklist {
 
   Checklist({
     required this.id,
-    required this.location,
-    required this.inspectionDate,
-    required this.inspectionType,
+    this.location,
+    this.inspectionDate,
+    this.inspectionType,
     this.inspectorName,
     required this.photoSlots,
     required this.checklistItems,
@@ -40,7 +40,7 @@ class Checklist {
     return {
       'id': id,
       'location': location,
-      'inspection_date': inspectionDate.toIso8601String(),
+      'inspection_date': inspectionDate?.toIso8601String(),
       'inspection_type': inspectionType,
       'inspector_name': inspectorName,
       'photo_slots': photoSlots,
@@ -85,13 +85,13 @@ class ChecklistItem {
 class Photo {
   final int id;
   final int checklistId;
-  final String photoUrl;
+  final String? photoUrl;
   final String? description;
 
   Photo({
     required this.id,
     required this.checklistId,
-    required this.photoUrl,
+    this.photoUrl,
     this.description,
   });
 

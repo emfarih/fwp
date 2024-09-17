@@ -31,7 +31,7 @@ class ChecklistDetailScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Location: ${checklist.location}'),
-                Text('Inspection Date: ${checklist.inspectionDate.toLocal()}'),
+                Text('Inspection Date: ${checklist.inspectionDate?.toLocal()}'),
                 Text('Inspection Type: ${checklist.inspectionType}'),
                 // Add more details and lists for checklist items and photos
               ],

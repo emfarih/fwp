@@ -9,8 +9,8 @@ class ChecklistTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(checklist.location),
-      subtitle: Text('Inspection Date: ${checklist.inspectionDate.toLocal()}'),
+      title: Text(checklist.location ?? 'Default Location'),
+      subtitle: Text('Inspection Date: ${checklist.inspectionDate?.toLocal()}'),
       onTap: () {
         Navigator.pushNamed(
           context,

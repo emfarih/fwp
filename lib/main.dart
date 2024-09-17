@@ -37,9 +37,14 @@ void main() {
         ChangeNotifierProvider<LoginViewModel>(
           create: (context) => LoginViewModel(
             Provider.of<LoginUseCase>(context, listen: false),
+            Provider.of<GetRoleIdUseCase>(context, listen: false),
           ),
         ),
-        Provider<CLMApiService>(create: (_) => CLMApiService()),
+        Provider<CLMApiService>(
+          create: (context) => CLMApiService(
+            Provider.of<TokenStorageService>(context, listen: false),
+          ),
+        ),
         Provider<CLMRepository>(
           create: (context) => CLMRepository(
             Provider.of<CLMApiService>(context, listen: false),

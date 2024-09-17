@@ -15,6 +15,7 @@ class SplashScreen extends StatelessWidget {
     return FutureBuilder<int?>(
       future: getRoleIdUseCase.getRoleId(),
       builder: (context, snapshot) {
+        print('build at ${DateTime.now()}');
         print('SplashScreen: Checking role_id...');
 
         if (snapshot.connectionState == ConnectionState.waiting) {

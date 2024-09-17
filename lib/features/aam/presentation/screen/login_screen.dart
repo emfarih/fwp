@@ -36,13 +36,13 @@ class LoginScreen extends StatelessWidget {
                   // print('Attempting to login with username: ${viewModel.username}');
 
                   // Attempt login
-                  final success = await viewModel.login();
+                  final roleId = await viewModel.login();
 
                   // print('await viewModel.login() await passed');
 
                   // Check if the widget is still mounted
                   if (currentContext.mounted) {
-                    if (success) {
+                    if (roleId == 2) {
                       // Log success and navigate on successful login
                       // print('Login successful. Navigating to ChecklistListScreen.');
                       Navigator.pushReplacement(
@@ -56,7 +56,7 @@ class LoginScreen extends StatelessWidget {
                       ScaffoldMessenger.of(currentContext).showSnackBar(
                         const SnackBar(
                           content: Text(
-                              'Login failed. Incorrect username or password.'),
+                              'Login failed. Incorrect username/password or Unauthorized Role.'),
                         ),
                       );
                     }
