@@ -1,8 +1,9 @@
 import 'dart:convert';
-import 'package:fwp/features/aam/data/services/aam_api_service.dart';
+
+import 'package:fwp/shared/services/api_service.dart';
 
 class AAMRepository {
-  final AAMApiService apiService;
+  final ApiService apiService;
 
   AAMRepository(this.apiService);
 
@@ -11,7 +12,7 @@ class AAMRepository {
     final String encodedCredentials = base64Encode(utf8.encode(credentials));
 
     final response = await apiService.post(
-      '/login',
+      '/aam/login',
       headers: {
         'Authorization': 'Basic $encodedCredentials',
         'Content-Type': 'application/json',

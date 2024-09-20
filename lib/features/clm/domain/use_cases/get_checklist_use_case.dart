@@ -2,7 +2,7 @@ import 'package:fwp/features/clm/data/models/checklist.dart';
 import 'package:fwp/features/clm/data/repositories/clm_repository.dart';
 
 class GetChecklistUseCase {
-  final CLMRepository repository;
+  final ChecklistRepository repository;
 
   GetChecklistUseCase(this.repository);
 

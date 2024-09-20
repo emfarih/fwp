@@ -1,16 +1,16 @@
 import 'dart:convert';
 import 'package:fwp/features/clm/data/models/checklist.dart';
-import 'package:fwp/features/clm/data/services/clm_api_service.dart';
+import 'package:fwp/shared/services/api_service.dart';
 
-class CLMRepository {
-  final CLMApiService apiService;
+class ChecklistRepository {
+  final ApiService apiService;
 
-  CLMRepository(this.apiService);
+  ChecklistRepository(this.apiService);
 
   Future<List<Checklist>> getChecklists() async {
     print('CLMRepository: Start fetching checklists');
     try {
-      final response = await apiService.get('/checklists');
+      final response = await apiService.get('/clm/checklists');
       print(
           'CLMRepository: Received response with status code ${response.statusCode}');
 
@@ -37,7 +37,7 @@ class CLMRepository {
   Future<Checklist> getChecklistById(int id) async {
     print('CLMRepository: Start fetching checklist with ID $id');
     try {
-      final response = await apiService.get('/checklists/$id');
+      final response = await apiService.get('/clm/checklists/$id');
       print(
           'CLMRepository: Received response with status code ${response.statusCode}');
 

@@ -45,11 +45,11 @@ class LoginScreen extends StatelessWidget {
                     if (roleId == 2) {
                       // Log success and navigate on successful login
                       // print('Login successful. Navigating to ChecklistListScreen.');
-                      Navigator.pushReplacement(
-                        currentContext,
-                        MaterialPageRoute(
-                            builder: (context) => const ChecklistListScreen()),
-                      );
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        Navigator.of(context).pushReplacementNamed(
+                          '/system_list',
+                        );
+                      });
                     } else {
                       // Log failure
                       // print('Login failed. Incorrect username or password.');
