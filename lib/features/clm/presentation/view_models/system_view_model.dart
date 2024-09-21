@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fwp/features/clm/data/models/system.dart';
 import 'package:fwp/features/clm/domain/use_cases/fetch_systems_use_case.dart';
-import 'package:fwp/features/clm/domain/use_cases/get_checklist_use_case.dart';
 import 'package:fwp/features/clm/domain/use_cases/get_location_types_count_use_case.dart';
 
 class SystemViewModel extends ChangeNotifier {

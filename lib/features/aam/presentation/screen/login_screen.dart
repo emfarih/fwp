@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fwp/features/clm/presentation/screens/checklist_list_screen.dart';
+import 'package:fwp/features/clm/presentation/screens/checklists_list_screen.dart';
 import 'package:provider/provider.dart';
 import '../view_models/login_view_model.dart';
 

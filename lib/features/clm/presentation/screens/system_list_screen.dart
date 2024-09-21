@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fwp/features/clm/data/models/checklist.dart';
 import 'package:fwp/features/clm/presentation/view_models/system_view_model.dart';
 import 'package:fwp/features/clm/presentation/widgets/clm_list_tile.dart';
 import 'package:fwp/routes.dart';
@@ -11,7 +12,7 @@ class SystemsListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = Provider.of<SystemViewModel>(context);
 
-    print('SystemListScreen: Building UI');
+    print('SystemsListScreen: Building UI');
 
     return Scaffold(
       appBar: AppBar(title: const Text('Systems')),
@@ -19,27 +20,27 @@ class SystemsListScreen extends StatelessWidget {
         future: viewModel.fetchSystems(),
         builder: (context, snapshot) {
           print(
-              'SystemListScreen: FutureBuilder state: ${snapshot.connectionState}');
+              'SystemsListScreen: FutureBuilder state: ${snapshot.connectionState}');
 
           if (viewModel.isLoading) {
-            print('SystemListScreen: Loading systems...');
+            print('SystemsListScreen: Loading systems...');
             return const Center(child: CircularProgressIndicator());
           }
 
           if (viewModel.errorMessage != null) {
             print(
-                'SystemListScreen: Error occurred: ${viewModel.errorMessage}');
+                'SystemsListScreen: Error occurred: ${viewModel.errorMessage}');
             return Center(child: Text(viewModel.errorMessage!));
           }
 
           print(
-              'SystemListScreen: Successfully loaded ${viewModel.systems.length} systems');
+              'SystemsListScreen: Successfully loaded ${viewModel.systems.length} systems');
 
           return ListView.builder(
             itemCount: viewModel.systems.length,
             itemBuilder: (context, index) {
               final system = viewModel.systems[index];
-              print('SystemListScreen: Displaying system: ${system.fullName}');
+              print('SystemsListScreen: Displaying system: ${system.fullName}');
               return CLMListTile(
                 title: system.fullName,
                 subtitle: system.shortName,
@@ -48,21 +49,35 @@ class SystemsListScreen extends StatelessWidget {
                     final locationTypesCount =
                         await viewModel.getLocationTypesCount(system.id);
 
+                    // Prepare the checklist model with the selected system's ID
+                    final checklist = Checklist(
+                      id: 0, // Placeholder ID; adjust as needed
+                      systemId: system.id,
+                      description: null,
+                      locationTypeId: 0, // Default or initial value
+                      stationId: null, // Adjust as needed
+                      substationId: null, // Adjust as needed
+                      inspectionDate: null, // Initialize as needed
+                      inspectorName: null, // Initialize as needed
+                      checklistItems: [], // Initialize as needed
+                      photos: [], // Initialize as needed
+                    );
+
                     // Navigate based on the count of location types
                     if (locationTypesCount > 1) {
                       print(
-                          'SystemListScreen: Multiple location types for ${system.fullName}');
+                          'SystemsListScreen: Multiple location types for ${system.fullName}');
                       Navigator.pushNamed(context, AppRoutes.locationTypesList,
-                          arguments: system.id);
+                          arguments: checklist);
                     } else {
                       print(
-                          'SystemListScreen: Single location type for ${system.fullName}');
+                          'SystemsListScreen: Single location type for ${system.fullName}');
                       Navigator.pushNamed(context, AppRoutes.stationsList,
-                          arguments: system.id);
+                          arguments: checklist);
                     }
                   } catch (e) {
                     print(
-                        'SystemListScreen: Error checking location types: $e');
+                        'SystemsListScreen: Error checking location types: $e');
                   }
                 },
               );

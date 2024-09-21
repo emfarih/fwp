@@ -11,3 +11,21 @@ class LocationType {
     );
   }
 }
+
+enum LocationTypeEnum {
+  station(1),
+  substation(2);
+
+  final int id;
+
+  const LocationTypeEnum(this.id);
+
+  static LocationTypeEnum? fromId(int id) {
+    for (var type in LocationTypeEnum.values) {
+      if (type.id == id) {
+        return type;
+      }
+    }
+    return null; // Return null if no match is found
+  }
+}

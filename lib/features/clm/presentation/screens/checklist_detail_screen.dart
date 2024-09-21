@@ -44,7 +44,7 @@ class _ChecklistDetailScreenState extends State<ChecklistDetailScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Location: ${checklist.location ?? 'Unknown'}',
+                Text('Location: ${checklist.stationId ?? 'Unknown'}',
                     style: Theme.of(context).textTheme.titleLarge),
                 Text(
                     'Inspection Date: ${checklist.inspectionDate?.toLocal() ?? 'Unknown'}'),
