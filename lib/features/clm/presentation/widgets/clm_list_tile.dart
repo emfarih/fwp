@@ -9,7 +9,7 @@ class CLMListTile extends StatelessWidget {
   const CLMListTile({
     super.key,
     required this.title,
-    required this.subtitle,
+    this.subtitle = "",
     required this.onTap,
     this.leadingIcon = Icons.settings, // Default icon if not provided
   });

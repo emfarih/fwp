@@ -4,11 +4,13 @@ import 'package:fwp/features/aam/domain/use_case/get_role_id_use_case.dart';
 import 'package:fwp/features/aam/presentation/screen/login_screen.dart';
 import 'package:fwp/features/clm/data/repositories/location_type_repository.dart';
 import 'package:fwp/features/clm/data/repositories/station_repository.dart';
+import 'package:fwp/features/clm/data/repositories/substation_repository.dart';
 import 'package:fwp/features/clm/data/repositories/system_repository.dart';
 import 'package:fwp/features/clm/domain/use_cases/fetch_systems_use_case.dart';
 import 'package:fwp/features/clm/domain/use_cases/get_location_types_count_use_case.dart';
 import 'package:fwp/features/clm/domain/use_cases/get_location_types_use_case.dart';
 import 'package:fwp/features/clm/domain/use_cases/get_stations_use_case.dart';
+import 'package:fwp/features/clm/domain/use_cases/get_substations_use_case.dart';
 import 'package:fwp/features/clm/presentation/screens/checklist_detail_screen.dart';
 import 'package:fwp/features/clm/presentation/screens/checklist_list_screen.dart';
 import 'package:fwp/features/clm/presentation/screens/location_type_list_screen.dart';
@@ -16,6 +18,7 @@ import 'package:fwp/features/clm/presentation/screens/station_list_screen.dart';
 import 'package:fwp/features/clm/presentation/screens/system_list_screen.dart';
 import 'package:fwp/features/clm/presentation/view_models/location_type_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/station_view_model.dart';
+import 'package:fwp/features/clm/presentation/view_models/substation_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/system_view_model.dart';
 import 'package:fwp/routes.dart';
 import 'package:fwp/splash_screen.dart';
@@ -57,6 +60,11 @@ void main() {
             Provider.of<ApiService>(context, listen: false),
           ),
         ),
+        Provider<SubstationRepository>(
+          create: (context) => SubstationRepository(
+            Provider.of<ApiService>(context, listen: false),
+          ),
+        ),
         Provider<ChecklistRepository>(
           create: (context) => ChecklistRepository(
             Provider.of<ApiService>(context, listen: false),
@@ -93,6 +101,11 @@ void main() {
             Provider.of<StationRepository>(context, listen: false),
           ),
         ),
+        Provider<GetSubstationsUseCase>(
+          create: (context) => GetSubstationsUseCase(
+            Provider.of<SubstationRepository>(context, listen: false),
+          ),
+        ),
         Provider<GetChecklistUseCase>(
           create: (context) => GetChecklistUseCase(
             Provider.of<ChecklistRepository>(context, listen: false),
@@ -118,6 +131,11 @@ void main() {
         ChangeNotifierProvider<StationViewModel>(
           create: (context) => StationViewModel(
             Provider.of<GetStationsUseCase>(context, listen: false),
+          ),
+        ),
+        ChangeNotifierProvider<SubstationViewModel>(
+          create: (context) => SubstationViewModel(
+            Provider.of<GetSubstationsUseCase>(context, listen: false),
           ),
         ),
         ChangeNotifierProvider<ChecklistViewModel>(

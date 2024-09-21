@@ -4,8 +4,8 @@ import 'package:fwp/features/clm/presentation/widgets/clm_list_tile.dart';
 import 'package:fwp/routes.dart';
 import 'package:provider/provider.dart';
 
-class SystemListScreen extends StatelessWidget {
-  const SystemListScreen({super.key});
+class SystemsListScreen extends StatelessWidget {
+  const SystemsListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

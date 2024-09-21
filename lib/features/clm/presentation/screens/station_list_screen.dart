@@ -3,8 +3,8 @@ import 'package:fwp/features/clm/presentation/widgets/clm_list_tile.dart';
 import 'package:provider/provider.dart';
 import 'package:fwp/features/clm/presentation/view_models/station_view_model.dart';
 
-class StationListScreen extends StatelessWidget {
-  const StationListScreen({super.key});
+class StationsListScreen extends StatelessWidget {
+  const StationsListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
