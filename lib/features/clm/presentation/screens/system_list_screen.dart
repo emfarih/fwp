@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fwp/features/aam/presentation/view_models/auth_view_model.dart';
 import 'package:fwp/features/clm/data/models/checklist.dart';
 import 'package:fwp/features/clm/presentation/view_models/system_view_model.dart';
 import 'package:fwp/features/clm/presentation/widgets/clm_list_tile.dart';
@@ -10,36 +11,50 @@ class SystemsListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<SystemViewModel>(context);
+    final systemViewModel = Provider.of<SystemViewModel>(context);
+    final authViewModel = Provider.of<AuthViewModel>(context);
 
     print('SystemsListScreen: Building UI');
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Systems')),
+      appBar: AppBar(
+        title: const Text('Systems'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+            onPressed: () async {
+              await authViewModel.logout(); // Call the logout method
+              Navigator.pushReplacementNamed(
+                  context, AppRoutes.login); // Navigate to login
+            },
+          ),
+        ],
+      ),
       body: FutureBuilder<void>(
-        future: viewModel.fetchSystems(),
+        future: systemViewModel.fetchSystems(),
         builder: (context, snapshot) {
           print(
               'SystemsListScreen: FutureBuilder state: ${snapshot.connectionState}');
 
-          if (viewModel.isLoading) {
+          if (systemViewModel.isLoading) {
             print('SystemsListScreen: Loading systems...');
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (viewModel.errorMessage != null) {
+          if (systemViewModel.errorMessage != null) {
             print(
-                'SystemsListScreen: Error occurred: ${viewModel.errorMessage}');
-            return Center(child: Text(viewModel.errorMessage!));
+                'SystemsListScreen: Error occurred: ${systemViewModel.errorMessage}');
+            return Center(child: Text(systemViewModel.errorMessage!));
           }
 
           print(
-              'SystemsListScreen: Successfully loaded ${viewModel.systems.length} systems');
+              'SystemsListScreen: Successfully loaded ${systemViewModel.systems.length} systems');
 
           return ListView.builder(
-            itemCount: viewModel.systems.length,
+            itemCount: systemViewModel.systems.length,
             itemBuilder: (context, index) {
-              final system = viewModel.systems[index];
+              final system = systemViewModel.systems[index];
               print('SystemsListScreen: Displaying system: ${system.fullName}');
               return CLMListTile(
                 title: system.fullName,
@@ -47,23 +62,10 @@ class SystemsListScreen extends StatelessWidget {
                 onTap: () async {
                   try {
                     final locationTypesCount =
-                        await viewModel.getLocationTypesCount(system.id);
+                        await systemViewModel.getLocationTypesCount(system.id);
 
-                    // Prepare the checklist model with the selected system's ID
-                    final checklist = Checklist(
-                      id: 0, // Placeholder ID; adjust as needed
-                      systemId: system.id,
-                      description: null,
-                      locationTypeId: 0, // Default or initial value
-                      stationId: null, // Adjust as needed
-                      substationId: null, // Adjust as needed
-                      inspectionDate: null, // Initialize as needed
-                      inspectorName: null, // Initialize as needed
-                      checklistItems: [], // Initialize as needed
-                      photos: [], // Initialize as needed
-                    );
+                    final checklist = Checklist(systemId: system.id);
 
-                    // Navigate based on the count of location types
                     if (locationTypesCount > 1) {
                       print(
                           'SystemsListScreen: Multiple location types for ${system.fullName}');

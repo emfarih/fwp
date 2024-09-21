@@ -27,7 +27,7 @@ class SplashScreen extends StatelessWidget {
 
             // Navigate based on the role ID using named routes
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (roleId == 2) {
+              if (roleId == 2 || roleId == 1) {
                 // Remove the back button by setting the 'system_list' route as the root.
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   AppRoutes.systemsList,

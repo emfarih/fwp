@@ -22,11 +22,16 @@ class ChecklistsListScreen extends StatelessWidget {
         future: viewModel.fetchChecklists(),
         builder: (context, snapshot) {
           if (viewModel.isLoading) {
+            print('Loading checklists...');
             return const Center(child: CircularProgressIndicator());
           }
           if (viewModel.errorMessage != null) {
+            print('Error fetching checklists: ${viewModel.errorMessage}');
             return Center(child: Text(viewModel.errorMessage!));
           }
+
+          print('Fetched ${viewModel.checklists.length} checklists');
+
           return ListView.builder(
             itemCount: viewModel.checklists.length,
             itemBuilder: (context, index) {
@@ -34,14 +39,20 @@ class ChecklistsListScreen extends StatelessWidget {
 
               // Concatenated title with system and station/substation names
               final title =
-                  '${checklistItem.systemId} - ${checklistItem.stationId ?? checklistItem.substationId}';
+                  '${checklistItem.systemId} - ${checklistItem.stationId ?? checklistItem.substationId ?? "Unknown"}';
 
               return CLMListTile(
                 title: title, // Concatenated title
                 subtitle: checklistItem.description ??
                     'No Description', // Use checklist.description for subtitle
                 onTap: () {
+                  print('Tapped on checklist: $title');
                   // Handle navigation or actions when the checklist tile is tapped
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.checklistDetail, // Replace with your detail route
+                    arguments: checklistItem,
+                  );
                 },
               );
             },
@@ -50,15 +61,16 @@ class ChecklistsListScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          print('Navigating to add checklist screen');
           // Pass the checklist as arguments to the checklist_add route
-          // Navigator.pushNamed(
-          //   context,
-          //   AppRoutes.checklist_add,
-          //   arguments: checklist,
-          // );
-        },
-        child: const Icon(Icons.add), // Icon for FAB
-        tooltip: 'Add Checklist', // Tooltip for accessibility
+          Navigator.pushNamed(
+            context,
+            AppRoutes.checklistAdd,
+            arguments: checklist,
+          );
+        }, // Icon for FAB
+        tooltip: 'Add Checklist',
+        child: const Icon(Icons.add), // Tooltip for accessibility
       ),
     );
   }

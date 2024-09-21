@@ -1,5 +1,5 @@
 import 'package:fwp/features/clm/data/models/checklist.dart';
-import 'package:fwp/features/clm/data/repositories/clm_repository.dart';
+import 'package:fwp/features/clm/data/repositories/checklist_repository.dart';
 
 class GetChecklistUseCase {
   final ChecklistRepository repository;

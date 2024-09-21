@@ -23,7 +23,7 @@ class LocationTypesListScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Location Types')),
       body: FutureBuilder<void>(
         future: viewModel
-            .fetchLocationTypes(checklist.systemId), // Use checklist.systemId
+            .fetchLocationTypes(checklist.systemId!), // Use checklist.systemId
         builder: (context, snapshot) {
           print(
               'LocationTypesListScreen: FutureBuilder state: ${snapshot.connectionState}');

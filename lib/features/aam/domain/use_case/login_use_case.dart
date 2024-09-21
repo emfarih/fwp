@@ -1,11 +1,11 @@
 import 'package:fwp/features/aam/data/repositories/aam_repository.dart';
 import 'package:fwp/features/aam/data/services/token_storage_service.dart';
 
-class LoginUseCase {
+class AuthUseCase {
   final AAMRepository repository;
   final TokenStorageService tokenStorageService;
 
-  LoginUseCase(this.repository, this.tokenStorageService);
+  AuthUseCase(this.repository, this.tokenStorageService);
 
   Future<bool> login(String username, String password) async {
     final token = await repository.authenticate(username, password);

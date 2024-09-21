@@ -1,12 +1,12 @@
 class ChecklistItem {
-  final int id;
-  final int checklistId; // Reference to the checklist this item belongs to
+  final int? id;
+  final int? checklistId; // Reference to the checklist this item belongs to
   final String? description; // Nullable description
   final String? status; // "pass" or "fail"
 
   ChecklistItem({
-    required this.id,
-    required this.checklistId,
+    this.id,
+    this.checklistId,
     this.description,
     this.status,
   });
@@ -65,30 +65,37 @@ class Photo {
 
 // Checklist represents the checklist data model
 class Checklist {
-  final int id;
-  final int systemId; // ID of the associated system
-  int locationTypeId; // ID of the associated location type
+  final int? id;
+  final int? systemId; // ID of the associated system
+  int? locationTypeId; // ID of the associated location type
   int? stationId; // Pointer for nullable field
   int? substationId; // Pointer for nullable field
   final DateTime? inspectionDate; // Pointer for nullable field
   final String? inspectorName; // Pointer for nullable field
-  final String? description; // Pointer for nullable field
-  final List<ChecklistItem>
+  String? description; // Pointer for nullable field
+  final List<ChecklistItem>?
       checklistItems; // Assuming this is a defined struct elsewhere
-  final List<Photo> photos; // Assuming this is a defined struct elsewhere
+  final List<Photo>? photos; // Assuming this is a defined struct elsewhere
 
   Checklist({
-    required this.id,
-    required this.systemId,
-    required this.locationTypeId,
+    this.id,
+    this.systemId,
+    this.locationTypeId,
     this.stationId,
     this.substationId,
     this.inspectionDate,
     this.inspectorName,
     this.description,
-    required this.checklistItems,
-    required this.photos,
+    this.checklistItems,
+    this.photos,
   });
+
+  @override
+  String toString() {
+    return 'Checklist(id: $id, systemId: $systemId, locationTypeId: $locationTypeId, '
+        'stationId: $stationId, substationId: $substationId, '
+        'description: $description, checklistItems: ${checklistItems?.length}, photos: ${photos?.length})';
+  }
 
   factory Checklist.fromJson(Map<String, dynamic> json) {
     return Checklist(
@@ -121,8 +128,8 @@ class Checklist {
       'inspection_date': inspectionDate?.toIso8601String(),
       'inspector_name': inspectorName,
       'description': description,
-      'checklist_items': checklistItems.map((item) => item.toJson()).toList(),
-      'photos': photos.map((photo) => photo.toJson()).toList(),
+      'checklist_items': checklistItems?.map((item) => item.toJson()).toList(),
+      'photos': photos?.map((photo) => photo.toJson()).toList(),
     };
   }
 }

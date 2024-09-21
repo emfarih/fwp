@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fwp/features/aam/presentation/screen/login_screen.dart';
+import 'package:fwp/features/clm/presentation/screens/checklist_add_screen.dart';
 import 'package:fwp/features/clm/presentation/screens/checklist_detail_screen.dart';
 import 'package:fwp/features/clm/presentation/screens/checklists_list_screen.dart';
 import 'package:fwp/features/clm/presentation/screens/location_type_list_screen.dart';
@@ -28,7 +29,7 @@ class AppRoutes {
       stationsList: (context) => const StationsListScreen(),
       substationsList: (context) => const SubstationsListScreen(),
       checklistsList: (context) => const ChecklistsListScreen(),
-      // checklistAdd: (context) => const ChecklistAddScreen(),
+      checklistAdd: (context) => const ChecklistAddScreen(),
       checklistDetail: (context) => const ChecklistDetailScreen(),
     };
   }

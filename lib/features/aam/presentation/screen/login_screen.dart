@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:fwp/features/clm/presentation/screens/checklists_list_screen.dart';
+import 'package:fwp/routes.dart';
 import 'package:provider/provider.dart';
-import '../view_models/login_view_model.dart';
+import '../view_models/auth_view_model.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<LoginViewModel>(context);
+    final viewModel = Provider.of<AuthViewModel>(context);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Login')),
@@ -42,12 +43,12 @@ class LoginScreen extends StatelessWidget {
 
                   // Check if the widget is still mounted
                   if (currentContext.mounted) {
-                    if (roleId == 2) {
+                    if (roleId == 2 || roleId == 1) {
                       // Log success and navigate on successful login
                       // print('Login successful. Navigating to ChecklistListScreen.');
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         Navigator.of(context).pushReplacementNamed(
-                          '/system_list',
+                          AppRoutes.systemsList,
                         );
                       });
                     } else {
