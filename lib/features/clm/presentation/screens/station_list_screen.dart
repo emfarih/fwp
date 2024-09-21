@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fwp/features/clm/presentation/widgets/clm_list_tile.dart';
 import 'package:provider/provider.dart';
 import 'package:fwp/features/clm/presentation/view_models/station_view_model.dart';
 
@@ -26,9 +27,9 @@ class StationListScreen extends StatelessWidget {
             itemCount: viewModel.stations.length,
             itemBuilder: (context, index) {
               final station = viewModel.stations[index];
-              return ListTile(
-                title: Text(station.fullName),
-                subtitle: Text(station.shortName),
+              return CLMListTile(
+                title: station.fullName,
+                subtitle: station.shortName,
                 onTap: () {
                   // Handle station tap, e.g., navigate to checklists
                 },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fwp/routes.dart';
 import 'package:provider/provider.dart';
 import 'features/aam/domain/use_case/get_role_id_use_case.dart';
 
@@ -29,12 +30,12 @@ class SplashScreen extends StatelessWidget {
               if (roleId == 2) {
                 // Remove the back button by setting the 'system_list' route as the root.
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/system_list',
+                  AppRoutes.systemsList,
                   (Route<dynamic> route) =>
                       false, // Removes all previous routes
                 );
               } else {
-                Navigator.of(context).pushReplacementNamed('/login');
+                Navigator.of(context).pushReplacementNamed(AppRoutes.login);
               }
             });
           } else {
@@ -46,7 +47,7 @@ class SplashScreen extends StatelessWidget {
 
             // Navigate to LoginScreen in case of error or null data
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.of(context).pushReplacementNamed('/login');
+              Navigator.of(context).pushReplacementNamed(AppRoutes.login);
             });
           }
         }

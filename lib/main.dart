@@ -17,6 +17,7 @@ import 'package:fwp/features/clm/presentation/screens/system_list_screen.dart';
 import 'package:fwp/features/clm/presentation/view_models/location_type_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/station_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/system_view_model.dart';
+import 'package:fwp/routes.dart';
 import 'package:fwp/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'features/aam/data/repositories/aam_repository.dart';
@@ -136,16 +137,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const SplashScreen(),
-        '/login': (context) => const LoginScreen(),
-        '/system_list': (context) => const SystemListScreen(),
-        '/location_type_list': (context) => const LocationTypeListScreen(),
-        '/station_list': (context) => const StationListScreen(),
-        '/checklist_list': (context) => const ChecklistListScreen(),
-        '/checklist_detail': (context) => const ChecklistDetailScreen(),
-      },
+      title: 'Your App Title',
+      initialRoute: AppRoutes.splash,
+      routes: AppRoutes.routes,
     );
   }
 }

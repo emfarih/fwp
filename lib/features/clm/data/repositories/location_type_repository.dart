@@ -10,8 +10,7 @@ class LocationTypeRepository {
 
   Future<List<LocationType>> fetchLocationTypes(int systemId) async {
     try {
-      final response =
-          await apiService.get('/clm/systems/$systemId/location_types');
+      final response = await apiService.get('/clm/location_types');
       if (response.statusCode == 200) {
         // Decode the response and return a list of location types
         final List<dynamic> jsonData = jsonDecode(response.body);

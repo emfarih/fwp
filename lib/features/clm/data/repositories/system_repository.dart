@@ -33,12 +33,28 @@ class SystemRepository {
   }
 
   Future<int> getLocationTypesCount(int systemId) async {
-    final response = await apiService.get('/systems/$systemId/location_types');
+    print(
+        'Fetching location types for system ID: $systemId'); // Log the system ID
+
+    final response =
+        await apiService.get('/clm/systems/$systemId/location_types');
+
     if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body);
-      final List<dynamic> locationTypes = jsonData['location_types'];
-      return locationTypes.length;
+      print(
+          'Response received with status code: ${response.statusCode}'); // Log the status code
+
+      // Decode the response directly as a list
+      final List<dynamic> locationTypes = jsonDecode(response.body);
+
+      // Log the entire response for debugging
+      print('Response body: $locationTypes');
+
+      // Log the count of location types found
+      print('Number of location types found: ${locationTypes.length}');
+      return locationTypes.length; // Return the count of the list
     } else {
+      print(
+          'Failed to fetch location types: ${response.statusCode}'); // Log error status code
       throw Exception('Failed to fetch location types for system $systemId');
     }
   }

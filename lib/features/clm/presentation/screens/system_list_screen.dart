@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fwp/features/clm/presentation/view_models/system_view_model.dart';
-import 'package:fwp/features/clm/presentation/widgets/system_tile.dart';
+import 'package:fwp/features/clm/presentation/widgets/clm_list_tile.dart';
+import 'package:fwp/routes.dart';
 import 'package:provider/provider.dart';
 
 class SystemListScreen extends StatelessWidget {
@@ -39,8 +40,9 @@ class SystemListScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               final system = viewModel.systems[index];
               print('SystemListScreen: Displaying system: ${system.fullName}');
-              return SystemTile(
-                system: system,
+              return CLMListTile(
+                title: system.fullName,
+                subtitle: system.shortName,
                 onTap: () async {
                   try {
                     final locationTypesCount =
@@ -50,12 +52,12 @@ class SystemListScreen extends StatelessWidget {
                     if (locationTypesCount > 1) {
                       print(
                           'SystemListScreen: Multiple location types for ${system.fullName}');
-                      Navigator.pushNamed(context, '/location_types_list',
+                      Navigator.pushNamed(context, AppRoutes.locationTypesList,
                           arguments: system.id);
                     } else {
                       print(
                           'SystemListScreen: Single location type for ${system.fullName}');
-                      Navigator.pushNamed(context, '/stations_list',
+                      Navigator.pushNamed(context, AppRoutes.stationsList,
                           arguments: system.id);
                     }
                   } catch (e) {
