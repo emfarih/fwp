@@ -18,8 +18,6 @@ class ChecklistAddScreen extends StatelessWidget {
 
     print('ChecklistAddScreen: Retrieved checklist $checklist');
 
-    viewModel.setChecklist(checklist);
-
     // Create a title based on systemId, stationId, and substationId
     final title =
         '${checklist.systemId} - ${checklist.stationId ?? checklist.substationId ?? "No Station/Substation"}';
@@ -36,15 +34,24 @@ class ChecklistAddScreen extends StatelessWidget {
               decoration: const InputDecoration(labelText: 'Description'),
               onChanged: (value) {
                 print('ChecklistAddScreen: Description changed - $value');
-                viewModel.newChecklist?.description = value;
+                viewModel.description = value;
               },
             ),
             const SizedBox(height: 20),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.redAccent, // Text color
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20, vertical: 12), // Padding for a better look
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10), // Rounded corners
+                ),
+              ),
               onPressed: () async {
                 print(
-                    'ChecklistAddScreen: Submitting checklist - ${viewModel.newChecklist?.description}');
-                if (await viewModel.submitChecklist()) {
+                    'ChecklistAddScreen: Submitting checklist - ${viewModel.description}');
+                if (await viewModel.submitChecklist(checklist)) {
                   print('ChecklistAddScreen: Checklist added successfully');
                   Navigator.pop(context); // Return to the previous screen
                 } else {
@@ -54,32 +61,83 @@ class ChecklistAddScreen extends StatelessWidget {
                   );
                 }
               },
-              child: const Text('Add Checklist'),
+              child: const Text(
+                'Add Checklist',
+                style: TextStyle(
+                  color: Colors.white, // Ensure text color is white
+                  fontSize: 16, // Set font size
+                ),
+              ),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor:
+                    Colors.redAccent, // Text color when button is pressed
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20, vertical: 12), // Padding for a better look
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10), // Rounded corners
+                ),
+              ),
               onPressed: () async {
                 print('ChecklistAddScreen: Opening Add Item Dialog');
                 await _showAddItemDialog(context, viewModel);
               },
-              child: const Text('Add Checklist Item'),
+              child: const Text(
+                'Add Checklist Item',
+                style: TextStyle(
+                  color: Colors.white, // Ensure text color is white
+                  fontSize: 16, // Set font size
+                ),
+              ),
             ),
             const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
-                itemCount: viewModel.newChecklist?.checklistItems?.length ?? 0,
+                itemCount: viewModel.checklistItems.length,
                 itemBuilder: (context, index) {
-                  final item = viewModel.newChecklist?.checklistItems?[index];
+                  final item = viewModel.checklistItems[index];
 
                   print(
                       'ChecklistAddScreen: Displaying checklist item - ${item?.description ?? "No Description"}');
 
-                  return ListTile(
-                    title: Text(item?.description ?? 'No Description'),
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Card(
+                      elevation: 4, // Add shadow to the card
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(10), // Rounded corners
+                      ),
+                      color:
+                          Colors.red[50], // Light red background to match theme
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.check_circle_outline,
+                          color: Colors.redAccent, // Icon to match the theme
+                        ),
+                        title: Text(
+                          item.description ?? 'No Description',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight:
+                                FontWeight.w600, // Bold text for emphasis
+                          ),
+                        ),
+                        trailing: Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors
+                              .redAccent, // Trailing icon color matching theme
+                          size: 16,
+                        ),
+                      ),
+                    ),
                   );
                 },
               ),
-            ),
+            )
           ],
         ),
       ),

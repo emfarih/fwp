@@ -22,14 +22,19 @@ class ApiService {
   }
 
   // GET request with token in headers
-  Future<http.Response> get(String endpoint) async {
-    final uri = Uri.parse('$baseUrl$endpoint');
+  Future<http.Response> get(String endpoint,
+      {Map<String, String>? queryParams}) async {
+    // Construct the full URL with query parameters
+    final uri =
+        Uri.parse('$baseUrl$endpoint').replace(queryParameters: queryParams);
     print('ApiService: Sending GET request to $uri');
+
     final headers = await _getHeaders();
     final response = await http.get(uri, headers: headers);
     print(
         'ApiService: Received GET response with status code ${response.statusCode}');
     print('ApiService: Response body: ${response.body}');
+
     return response;
   }
 
@@ -37,6 +42,7 @@ class ApiService {
   Future<http.Response> post(String endpoint,
       {Map<String, String>? headers, dynamic body}) async {
     final url = Uri.parse('$baseUrl$endpoint');
+    final headers = await _getHeaders();
     final response = await http.post(
       url,
       headers: headers,

@@ -32,14 +32,14 @@ class ChecklistItem {
 
 // Represents a photo associated with a checklist
 class Photo {
-  final int id;
-  final int checklistId;
+  final int? id;
+  final int? checklistId;
   final String? photoUri; // URL or path to the photo
   final String? description; // Nullable description
 
   Photo({
-    required this.id,
-    required this.checklistId,
+    this.id,
+    this.checklistId,
     this.photoUri,
     this.description,
   });
@@ -70,10 +70,10 @@ class Checklist {
   int? locationTypeId; // ID of the associated location type
   int? stationId; // Pointer for nullable field
   int? substationId; // Pointer for nullable field
-  final DateTime? inspectionDate; // Pointer for nullable field
+  final DateTime? date; // Pointer for nullable field
   final String? inspectorName; // Pointer for nullable field
   String? description; // Pointer for nullable field
-  final List<ChecklistItem>?
+  List<ChecklistItem>?
       checklistItems; // Assuming this is a defined struct elsewhere
   final List<Photo>? photos; // Assuming this is a defined struct elsewhere
 
@@ -83,7 +83,7 @@ class Checklist {
     this.locationTypeId,
     this.stationId,
     this.substationId,
-    this.inspectionDate,
+    this.date,
     this.inspectorName,
     this.description,
     this.checklistItems,
@@ -104,17 +104,15 @@ class Checklist {
       locationTypeId: json['location_type_id'],
       stationId: json['station_id'],
       substationId: json['substation_id'],
-      inspectionDate: json['inspection_date'] != null
-          ? DateTime.parse(json['inspection_date'])
-          : null,
+      date: json['date'] != null ? DateTime.parse(json['date']) : null,
       inspectorName: json['inspector_name'],
       description: json['description'],
-      checklistItems: (json['checklist_items'] as List<dynamic>)
-          .map((item) => ChecklistItem.fromJson(item))
-          .toList(),
-      photos: (json['photos'] as List<dynamic>)
-          .map((item) => Photo.fromJson(item))
-          .toList(),
+      checklistItems: (json['checklist_items'] as List<dynamic>?)
+          ?.map((item) => ChecklistItem.fromJson(item))
+          .toList(), // Check for null before mapping
+      photos: (json['photos'] as List<dynamic>?)
+          ?.map((item) => Photo.fromJson(item))
+          .toList(), // Check for null before mapping
     );
   }
 
@@ -125,7 +123,7 @@ class Checklist {
       'location_type_id': locationTypeId,
       'station_id': stationId,
       'substation_id': substationId,
-      'inspection_date': inspectionDate?.toIso8601String(),
+      'date': date?.toIso8601String(),
       'inspector_name': inspectorName,
       'description': description,
       'checklist_items': checklistItems?.map((item) => item.toJson()).toList(),

@@ -19,7 +19,11 @@ class ChecklistsListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Checklists')),
       body: FutureBuilder<void>(
-        future: viewModel.fetchChecklists(),
+        future: viewModel.fetchChecklists(
+          systemId: checklist.systemId,
+          stationId: checklist.stationId,
+          substationId: checklist.substationId,
+        ),
         builder: (context, snapshot) {
           if (viewModel.isLoading) {
             print('Loading checklists...');
@@ -32,19 +36,21 @@ class ChecklistsListScreen extends StatelessWidget {
 
           print('Fetched ${viewModel.checklists.length} checklists');
 
+          // Check if the list is empty and show a message if it is
+          if (viewModel.checklists.isEmpty) {
+            return const Center(child: Text('No checklists found.'));
+          }
+
           return ListView.builder(
             itemCount: viewModel.checklists.length,
             itemBuilder: (context, index) {
               final checklistItem = viewModel.checklists[index];
 
               // Concatenated title with system and station/substation names
-              final title =
-                  '${checklistItem.systemId} - ${checklistItem.stationId ?? checklistItem.substationId ?? "Unknown"}';
+              final title = checklistItem.description ?? 'No Description';
 
               return CLMListTile(
                 title: title, // Concatenated title
-                subtitle: checklistItem.description ??
-                    'No Description', // Use checklist.description for subtitle
                 onTap: () {
                   print('Tapped on checklist: $title');
                   // Handle navigation or actions when the checklist tile is tapped
@@ -68,9 +74,9 @@ class ChecklistsListScreen extends StatelessWidget {
             AppRoutes.checklistAdd,
             arguments: checklist,
           );
-        }, // Icon for FAB
+        },
         tooltip: 'Add Checklist',
-        child: const Icon(Icons.add), // Tooltip for accessibility
+        child: const Icon(Icons.add), // Icon for FAB
       ),
     );
   }

@@ -7,19 +7,51 @@ class ChecklistRepository {
 
   ChecklistRepository(this.apiService);
 
-  Future<List<Checklist>> getChecklists() async {
+  Future<List<Checklist>> getChecklists(
+      {int? systemId, int? stationId, int? substationId}) async {
     print('ChecklistRepository: Start fetching checklists');
+
+    // Prepare the query parameters
+    final queryParams = <String, String>{};
+    if (systemId != null) {
+      queryParams['system_id'] = systemId.toString();
+    }
+    if (stationId != null) {
+      queryParams['station_id'] = stationId.toString();
+    }
+    if (substationId != null) {
+      queryParams['substation_id'] = substationId.toString();
+    }
+
     try {
-      final response = await apiService.get('/clm/checklists');
+      final response =
+          await apiService.get('/clm/checklists', queryParams: queryParams);
       print(
           'ChecklistRepository: Received response with status code ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonData = jsonDecode(response.body);
         final List<dynamic> checklistsData = jsonData['checklists'];
+
+        print('ChecklistRepository: Raw checklists data: $checklistsData');
+
+        if (checklistsData is! List) {
+          throw Exception('Invalid data format: Expected a list');
+        }
+
+        List<Checklist> parsedChecklists = [];
+        for (var item in checklistsData) {
+          print('ChecklistRepository: Checking item: $item');
+          if (item is Map<String, dynamic>) {
+            parsedChecklists.add(Checklist.fromJson(item));
+          } else {
+            print('ChecklistRepository: Invalid item: $item');
+          }
+        }
+
         print(
-            'ChecklistRepository: Successfully parsed ${checklistsData.length} checklists');
-        return checklistsData.map((item) => Checklist.fromJson(item)).toList();
+            'ChecklistRepository: Successfully parsed ${parsedChecklists.length} checklists');
+        return parsedChecklists;
       } else {
         throw Exception(
             'Failed to load checklists, status code: ${response.statusCode}');

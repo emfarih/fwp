@@ -47,7 +47,7 @@ class _ChecklistDetailScreenState extends State<ChecklistDetailScreen> {
                 Text('Location: ${checklist.stationId ?? 'Unknown'}',
                     style: Theme.of(context).textTheme.titleLarge),
                 Text(
-                    'Inspection Date: ${checklist.inspectionDate?.toLocal() ?? 'Unknown'}'),
+                    'Inspection Date: ${checklist.date?.toLocal() ?? 'Unknown'}'),
                 // Add more details here...
               ],
             ),

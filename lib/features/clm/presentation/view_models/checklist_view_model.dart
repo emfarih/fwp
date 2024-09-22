@@ -12,22 +12,32 @@ class ChecklistViewModel extends ChangeNotifier {
   bool isLoading = false;
   String? errorMessage;
 
-  Checklist? newChecklist;
+  List<ChecklistItem> checklistItems = [];
+
+  String description = "";
 
   ChecklistViewModel(this.getChecklistUseCase, this._addChecklistUseCase);
 
-  Future<void> fetchChecklists() async {
+  Future<void> fetchChecklists(
+      {int? systemId, int? stationId, int? substationId}) async {
     print('fetchChecklists: Start fetching checklists');
     isLoading = true;
+    errorMessage = null; // Reset error message on new fetch
     notifyListeners();
 
     try {
       print('fetchChecklists: Calling execute()');
-      checklists = await getChecklistUseCase.execute();
+      var fetchedChecklists = await getChecklistUseCase.execute(
+        systemId: systemId,
+        stationId: stationId,
+        substationId: substationId,
+      );
+
+      checklists = List<Checklist>.from(fetchedChecklists);
       print(
           'fetchChecklists: Successfully fetched ${checklists.length} checklists');
     } catch (e) {
-      errorMessage = 'Failed to load checklists';
+      errorMessage = 'Failed to load checklists: $e'; // Include error details
       print('fetchChecklists: Error occurred: $e');
     } finally {
       isLoading = false;
@@ -55,16 +65,15 @@ class ChecklistViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> submitChecklist() async {
-    return await _addChecklistUseCase.execute(newChecklist!);
-  }
-
-  void setChecklist(Checklist checklist) {
-    newChecklist = checklist;
+  Future<bool> submitChecklist(Checklist checklist) async {
+    final finalChecklist = checklist;
+    finalChecklist.checklistItems = checklistItems;
+    finalChecklist.description = description;
+    return await _addChecklistUseCase.execute(finalChecklist);
   }
 
   void addChecklistItem(ChecklistItem item) {
-    newChecklist!.checklistItems?.add(item);
+    checklistItems.add(item);
     notifyListeners(); // Notify listeners to update the UI
   }
 }

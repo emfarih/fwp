@@ -6,10 +6,22 @@ class GetChecklistUseCase {
 
   GetChecklistUseCase(this.repository);
 
-  Future<List<Checklist>> execute() async {
-    print('GetChecklistUseCase: Start fetching checklists');
+  Future<List<Checklist>> execute({
+    int? systemId,
+    int? stationId,
+    int? substationId,
+  }) async {
+    print('GetChecklistUseCase: Start fetching checklists with parameters: '
+        'systemId: $systemId, stationId: $stationId, substationId: $substationId');
+
     try {
-      final checklists = await repository.getChecklists();
+      final checklists = await repository.getChecklists(
+            systemId: systemId,
+            stationId: stationId,
+            substationId: substationId,
+          ) ??
+          []; // Default to empty list if null
+
       print(
           'GetChecklistUseCase: Successfully fetched ${checklists.length} checklists');
       return checklists;
