@@ -51,6 +51,18 @@ class ApiService {
     return response;
   }
 
+// Perform HTTP POST request
+  Future<http.Response> postLogin(String endpoint,
+      {Map<String, String>? headers, dynamic body}) async {
+    final url = Uri.parse('$baseUrl$endpoint');
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: body,
+    );
+    return response;
+  }
+
   // Example PUT request with token in headers
   Future<http.Response> put(String endpoint, Map<String, dynamic> body) async {
     final uri = Uri.parse('$baseUrl$endpoint');

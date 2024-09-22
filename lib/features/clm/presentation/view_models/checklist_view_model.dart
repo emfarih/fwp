@@ -76,4 +76,10 @@ class ChecklistViewModel extends ChangeNotifier {
     checklistItems.add(item);
     notifyListeners(); // Notify listeners to update the UI
   }
+
+  void updateChecklistItemStatus(int itemId, String? status) {
+    final item = checklistItems.firstWhere((item) => item.id == itemId);
+    item.status = status; // Update the status
+    notifyListeners(); // Notify listeners to update the UI
+  }
 }

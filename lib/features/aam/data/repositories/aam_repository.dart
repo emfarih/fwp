@@ -11,7 +11,7 @@ class AAMRepository {
     final String credentials = '$username:$password';
     final String encodedCredentials = base64Encode(utf8.encode(credentials));
 
-    final response = await apiService.post(
+    final response = await apiService.postLogin(
       '/aam/login',
       headers: {
         'Authorization': 'Basic $encodedCredentials',

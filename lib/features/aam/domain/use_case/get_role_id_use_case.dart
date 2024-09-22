@@ -16,6 +16,7 @@ class GetRoleIdUseCase {
       // Check if the token is expired
       if (JwtDecoder.isExpired(token)) {
         print('GetRoleIdUseCase: Token is expired');
+        tokenStorageService.clearToken();
         return null; // Token is expired
       }
 

@@ -53,12 +53,12 @@ class ChecklistsListScreen extends StatelessWidget {
                 title: title, // Concatenated title
                 onTap: () {
                   print('Tapped on checklist: $title');
-                  // Handle navigation or actions when the checklist tile is tapped
+                  viewModel.selectedChecklist = checklist;
                   Navigator.pushNamed(
-                    context,
-                    AppRoutes.checklistDetail, // Replace with your detail route
-                    arguments: checklistItem,
-                  );
+                      context,
+                      AppRoutes
+                          .checklistDetail // Replace with your detail route
+                      );
                 },
               );
             },

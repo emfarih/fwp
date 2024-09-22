@@ -14,7 +14,6 @@ class SplashScreen extends StatelessWidget {
     return FutureBuilder<int?>(
       future: getRoleIdUseCase.getRoleId(),
       builder: (context, snapshot) {
-        print('build at ${DateTime.now()}');
         print('SplashScreen: Checking role_id...');
 
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -35,6 +34,7 @@ class SplashScreen extends StatelessWidget {
                       false, // Removes all previous routes
                 );
               } else {
+// Navigate to LoginScreen in case of error or null data
                 Navigator.of(context).pushReplacementNamed(AppRoutes.login);
               }
             });
@@ -45,10 +45,7 @@ class SplashScreen extends StatelessWidget {
               print('SplashScreen: No role_id found.');
             }
 
-            // Navigate to LoginScreen in case of error or null data
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.of(context).pushReplacementNamed(AppRoutes.login);
-            });
+            Navigator.of(context).pushReplacementNamed(AppRoutes.login);
           }
         }
 

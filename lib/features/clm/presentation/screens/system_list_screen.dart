@@ -18,6 +18,7 @@ class SystemsListScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Systems'),
         actions: [
           IconButton(

@@ -2,7 +2,7 @@ class ChecklistItem {
   final int? id;
   final int? checklistId; // Reference to the checklist this item belongs to
   final String? description; // Nullable description
-  final String? status; // "pass" or "fail"
+  String? status; // "pass" or "fail"
 
   ChecklistItem({
     this.id,

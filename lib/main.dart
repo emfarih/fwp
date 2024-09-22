@@ -25,9 +25,22 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Your App Title',
+      navigatorObservers: [MyNavigatorObserver()],
       theme: buildTheme(), // Use the custom theme
       initialRoute: AppRoutes.splash,
       routes: AppRoutes.routes,
     );
+  }
+}
+
+class MyNavigatorObserver extends NavigatorObserver {
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print('Pushed route: ${route.settings.name}');
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print('Popped route: ${route.settings.name}');
   }
 }
