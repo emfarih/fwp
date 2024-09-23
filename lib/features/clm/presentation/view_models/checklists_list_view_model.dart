@@ -1,22 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:fwp/features/clm/data/models/checklist.dart';
-import 'package:fwp/features/clm/data/models/checklist_item.dart';
-import 'package:fwp/features/clm/domain/use_cases/add_checklist_use_case.dart';
 import '../../domain/use_cases/get_checklist_use_case.dart';
 
 class ChecklistListViewModel extends ChangeNotifier {
   final GetChecklistUseCase getChecklistUseCase;
-  final AddChecklistUseCase _addChecklistUseCase;
 
   List<Checklist> checklists = [];
   bool isLoading = false;
   String? errorMessage;
 
-  List<ChecklistItem> checklistItems = [];
-
-  String description = "";
-
-  ChecklistListViewModel(this.getChecklistUseCase, this._addChecklistUseCase);
+  ChecklistListViewModel(this.getChecklistUseCase);
 
   Future<void> fetchChecklists(
       {int? systemId, int? stationId, int? substationId}) async {
@@ -44,23 +37,5 @@ class ChecklistListViewModel extends ChangeNotifier {
       print('fetchChecklists: Finished fetching checklists');
       notifyListeners();
     }
-  }
-
-  Future<bool> submitChecklist(Checklist checklist) async {
-    final finalChecklist = checklist;
-    finalChecklist.checklistItems = checklistItems;
-    finalChecklist.description = description;
-    return await _addChecklistUseCase.execute(finalChecklist);
-  }
-
-  void addChecklistItem(ChecklistItem item) {
-    checklistItems.add(item);
-    notifyListeners(); // Notify listeners to update the UI
-  }
-
-  void updateChecklistItemStatus(int itemId, String? status) {
-    final item = checklistItems.firstWhere((item) => item.id == itemId);
-    item.status = status; // Update the status
-    notifyListeners(); // Notify listeners to update the UI
   }
 }

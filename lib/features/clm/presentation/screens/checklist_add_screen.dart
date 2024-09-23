@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fwp/features/clm/data/models/checklist.dart';
 import 'package:fwp/features/clm/data/models/checklist_item.dart';
-import 'package:fwp/features/clm/presentation/view_models/checklists_list_view_model.dart';
+import 'package:fwp/features/clm/domain/use_cases/add_checklist_use_case.dart';
+import 'package:fwp/features/clm/presentation/view_models/checklist_add_view_model.dart';
 import 'package:provider/provider.dart';
 
 class ChecklistAddScreen extends StatelessWidget {
@@ -11,44 +12,107 @@ class ChecklistAddScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     print('ChecklistAddScreen: Building UI');
 
-    final viewModel = Provider.of<ChecklistListViewModel>(context);
+    // Provide ChecklistAddViewModel scoped to this screen
+    return ChangeNotifierProvider(
+      create: (context) => ChecklistAddViewModel(
+          Provider.of<AddChecklistUseCase>(context, listen: false)),
+      child: Builder(
+        builder: (context) {
+          final viewModel = Provider.of<ChecklistAddViewModel>(context);
 
-    // Retrieve the checklist from the arguments
-    final Checklist checklist =
-        ModalRoute.of(context)!.settings.arguments as Checklist;
+          // Retrieve the checklist from the arguments
+          final Checklist checklist =
+              ModalRoute.of(context)!.settings.arguments as Checklist;
 
-    print('ChecklistAddScreen: Retrieved checklist $checklist');
+          print('ChecklistAddScreen: Retrieved checklist $checklist');
 
-    // Create a title based on systemId, stationId, and substationId
-    final title =
-        '${checklist.systemId} - ${checklist.stationId ?? checklist.substationId ?? "No Station/Substation"}';
+          // Create a title based on systemId, stationId, and substationId
+          final title =
+              '${checklist.systemId} - ${checklist.stationId ?? checklist.substationId ?? "No Station/Substation"}';
 
-    print('ChecklistAddScreen: Generated title - $title');
+          print('ChecklistAddScreen: Generated title - $title');
 
-    return Scaffold(
-      appBar: AppBar(title: Text('Add Checklist - $title')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              decoration: const InputDecoration(labelText: 'Description'),
-              onChanged: (value) {
-                print('ChecklistAddScreen: Description changed - $value');
-                viewModel.description = value;
-              },
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.redAccent, // Text color
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 20, vertical: 12), // Padding for a better look
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10), // Rounded corners
-                ),
+          return Scaffold(
+            appBar: AppBar(title: Text('Add Checklist - $title')),
+            body: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  TextField(
+                    decoration: const InputDecoration(labelText: 'Description'),
+                    onChanged: (value) {
+                      print('ChecklistAddScreen: Description changed - $value');
+                      viewModel.description = value;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.redAccent,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: () async {
+                      print('ChecklistAddScreen: Opening Add Item Dialog');
+                      await _showAddItemDialog(context, viewModel);
+                    },
+                    child: const Text(
+                      'Add Checklist Item',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: viewModel.checklistItems.length,
+                      itemBuilder: (context, index) {
+                        final item = viewModel.checklistItems[index];
+
+                        print(
+                            'ChecklistAddScreen: Displaying checklist item - ${item?.description ?? "No Description"}');
+
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Card(
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            color: Colors.red[50],
+                            child: ListTile(
+                              leading: Icon(
+                                Icons.check_circle_outline,
+                                color: Colors.redAccent,
+                              ),
+                              title: Text(
+                                item.description ?? 'No Description',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              trailing: Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.redAccent,
+                                size: 16,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                ],
               ),
+            ),
+            floatingActionButton: FloatingActionButton(
               onPressed: () async {
                 print(
                     'ChecklistAddScreen: Submitting checklist - ${viewModel.description}');
@@ -62,91 +126,18 @@ class ChecklistAddScreen extends StatelessWidget {
                   );
                 }
               },
-              child: const Text(
-                'Add Checklist',
-                style: TextStyle(
-                  color: Colors.white, // Ensure text color is white
-                  fontSize: 16, // Set font size
-                ),
-              ),
+              backgroundColor: Colors.redAccent,
+              child: const Icon(Icons.add),
+              tooltip: 'Add Checklist',
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor:
-                    Colors.redAccent, // Text color when button is pressed
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 20, vertical: 12), // Padding for a better look
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10), // Rounded corners
-                ),
-              ),
-              onPressed: () async {
-                print('ChecklistAddScreen: Opening Add Item Dialog');
-                await _showAddItemDialog(context, viewModel);
-              },
-              child: const Text(
-                'Add Checklist Item',
-                style: TextStyle(
-                  color: Colors.white, // Ensure text color is white
-                  fontSize: 16, // Set font size
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: ListView.builder(
-                itemCount: viewModel.checklistItems.length,
-                itemBuilder: (context, index) {
-                  final item = viewModel.checklistItems[index];
-
-                  print(
-                      'ChecklistAddScreen: Displaying checklist item - ${item?.description ?? "No Description"}');
-
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Card(
-                      elevation: 4, // Add shadow to the card
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(10), // Rounded corners
-                      ),
-                      color:
-                          Colors.red[50], // Light red background to match theme
-                      child: ListTile(
-                        leading: Icon(
-                          Icons.check_circle_outline,
-                          color: Colors.redAccent, // Icon to match the theme
-                        ),
-                        title: Text(
-                          item.description ?? 'No Description',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight:
-                                FontWeight.w600, // Bold text for emphasis
-                          ),
-                        ),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors
-                              .redAccent, // Trailing icon color matching theme
-                          size: 16,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            )
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 
   Future<void> _showAddItemDialog(
-      BuildContext context, ChecklistListViewModel viewModel) async {
+      BuildContext context, ChecklistAddViewModel viewModel) async {
     final TextEditingController descriptionController = TextEditingController();
 
     print('_showAddItemDialog: Opening dialog');
