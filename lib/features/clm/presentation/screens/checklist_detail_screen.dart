@@ -1,33 +1,91 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:fwp/features/clm/presentation/view_models/checklist_view_model.dart'; // Import the ViewModel
 import 'package:fwp/features/clm/presentation/widgets/checklist_item_tile.dart'; // Custom ListTile widget
+import 'package:fwp/features/clm/presentation/view_models/checklist_detail_view_model.dart';
 
-class ChecklistDetailScreen extends StatelessWidget {
+class ChecklistDetailScreen extends StatefulWidget {
   const ChecklistDetailScreen({super.key});
+
+  @override
+  _ChecklistDetailScreenState createState() => _ChecklistDetailScreenState();
+}
+
+class _ChecklistDetailScreenState extends State<ChecklistDetailScreen> {
+  late TextEditingController inspectorController;
+  late TextEditingController dateController;
+
+  @override
+  void initState() {
+    super.initState();
+    final viewModel =
+        Provider.of<ChecklistDetailViewModel>(context, listen: false);
+    inspectorController =
+        TextEditingController(text: viewModel.selectedChecklist?.inspectorName);
+    dateController = TextEditingController(
+      text: viewModel.selectedChecklist?.date != null
+          ? viewModel.selectedChecklist?.date
+              ?.toLocal()
+              .toString()
+              .split(' ')[0] // Show the date in a yyyy-mm-dd format
+          : '',
+    );
+    print(
+        'ChecklistDetailScreen: Initialized with inspector name: ${inspectorController.text} and date: ${dateController.text}');
+  }
+
+  @override
+  void dispose() {
+    inspectorController.dispose();
+    dateController.dispose();
+    super.dispose();
+    print('ChecklistDetailScreen: Disposed controllers.');
+  }
+
+  void _selectDate(BuildContext context) async {
+    final viewModel =
+        Provider.of<ChecklistDetailViewModel>(context, listen: false);
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: viewModel.selectedChecklist?.date ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (pickedDate != null && pickedDate != viewModel.selectedChecklist?.date) {
+      setState(() {
+        dateController.text = pickedDate.toLocal().toString().split(' ')[0];
+      });
+      print('ChecklistDetailScreen: Date selected: ${dateController.text}');
+      // Update the selected checklist in the view model
+      viewModel.selectedChecklist?.date = pickedDate;
+    }
+  }
+
+  void _showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     print('ChecklistDetailScreen: Building ChecklistDetailScreen');
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Checklist Details')),
-      body: Consumer<ChecklistViewModel>(
-        builder: (context, viewModel, child) {
-          print(
-              'ChecklistDetailScreen: ViewModel loading state: ${viewModel.isLoading}');
-
-          if (viewModel.isLoading) {
-            print('ChecklistDetailScreen: Loading checklist data...');
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (viewModel.errorMessage != null) {
+      appBar: AppBar(
+        title: Consumer<ChecklistDetailViewModel>(
+          builder: (context, viewModel, child) {
+            final selectedChecklist = viewModel.selectedChecklist;
             print(
-                'ChecklistDetailScreen: Error occurred: ${viewModel.errorMessage}');
-            return Center(child: Text('Error: ${viewModel.errorMessage}'));
-          }
-
+                'ChecklistDetailScreen: AppBar title set to: ${selectedChecklist?.description ?? 'Checklist Details'}');
+            return Text(selectedChecklist?.description ?? 'Checklist Details');
+          },
+        ),
+      ),
+      body: Consumer<ChecklistDetailViewModel>(
+        builder: (context, viewModel, child) {
           final selectedChecklist = viewModel.selectedChecklist;
 
           if (selectedChecklist == null) {
@@ -36,22 +94,33 @@ class ChecklistDetailScreen extends StatelessWidget {
           }
 
           print(
-              'ChecklistDetailScreen: Successfully retrieved checklist with ${selectedChecklist.checklistItems?.length} items.');
-
-          // Log each checklist item
-          for (var item in selectedChecklist.checklistItems ?? []) {
-            print(
-                'ChecklistDetailScreen: Item ID: ${item.id}, Description: ${item.description}, Status: ${item.status}');
-          }
+              'ChecklistDetailScreen: Successfully retrieved checklist with ${selectedChecklist.checklistItems?.length} ChecklistItems.');
 
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Location: ${selectedChecklist.stationId ?? 'Unknown'}',
-                    style: Theme.of(context).textTheme.titleLarge),
-                Text('Date: ${selectedChecklist.date?.toLocal() ?? 'Unknown'}'),
+                TextField(
+                  controller: inspectorController,
+                  decoration:
+                      const InputDecoration(labelText: 'Inspector Name'),
+                  onChanged: (value) {
+                    print(
+                        'ChecklistDetailScreen: Inspector name changed to: $value');
+                    viewModel.selectedChecklist?.inspectorName = value;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: dateController,
+                  decoration: const InputDecoration(labelText: 'Date'),
+                  readOnly: true,
+                  onTap: () => _selectDate(context),
+                  onChanged: (value) {
+                    print('ChecklistDetailScreen: Date changed to: $value');
+                  },
+                ),
                 const SizedBox(height: 16),
                 Text('Checklist Items:',
                     style: Theme.of(context).textTheme.titleMedium),
@@ -61,15 +130,9 @@ class ChecklistDetailScreen extends StatelessWidget {
                     itemCount: selectedChecklist.checklistItems?.length ?? 0,
                     itemBuilder: (context, index) {
                       final item = selectedChecklist.checklistItems?[index];
-                      if (item == null) {
-                        print(
-                            'ChecklistDetailScreen: Item is null at index $index');
-                        return const SizedBox(); // Return an empty box if item is null
-                      }
-                      print(
-                          'ChecklistDetailScreen: Building item tile for item ID: ${item.id}');
+                      if (item == null) return const SizedBox();
                       return ChecklistItemTile(
-                          item: item, viewModel: viewModel);
+                          checklistItem: item, viewModel: viewModel);
                     },
                   ),
                 ),
@@ -77,6 +140,27 @@ class ChecklistDetailScreen extends StatelessWidget {
             ),
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final detailViewModel =
+              Provider.of<ChecklistDetailViewModel>(context, listen: false);
+          print(
+              'ChecklistDetailScreen: Submitting changes for checklist ID: ${detailViewModel.selectedChecklist?.id}');
+
+          final success = await detailViewModel.submitChecklistUpdate();
+          if (success) {
+            print('ChecklistDetailScreen: Checklist updated successfully.');
+            _showSnackbar('Checklist updated successfully.');
+          } else {
+            print('ChecklistDetailScreen: Failed to update checklist.');
+            _showSnackbar('Failed to update checklist.');
+          }
+
+          // Optionally, navigate back or show a success message
+        },
+        tooltip: 'Submit Changes',
+        child: const Icon(Icons.check),
       ),
     );
   }

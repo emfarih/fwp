@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:fwp/features/aam/data/services/token_storage_service.dart';
 import 'package:http/http.dart' as http;
 
@@ -69,7 +71,14 @@ class ApiService {
     print('ApiService: Sending PUT request to $uri');
     final headers = await _getHeaders();
     print('ApiService: Request body: $body');
-    final response = await http.put(uri, headers: headers, body: body);
+
+    // Use jsonEncode to convert the body to a JSON string
+    final response = await http.put(
+      uri,
+      headers: headers,
+      body: jsonEncode(body), // Ensure the body is a JSON string
+    );
+
     print(
         'ApiService: Received PUT response with status code ${response.statusCode}');
     print('ApiService: Response body: ${response.body}');

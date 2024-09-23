@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:fwp/features/clm/data/models/checklist.dart';
-import 'package:fwp/features/clm/presentation/view_models/checklist_view_model.dart';
+import 'package:fwp/features/clm/data/models/checklist_item.dart';
+import 'package:fwp/features/clm/presentation/view_models/checklist_detail_view_model.dart';
 
 class ChecklistItemTile extends StatelessWidget {
-  final ChecklistItem item;
-  final ChecklistViewModel viewModel;
+  final ChecklistItem checklistItem;
+  final ChecklistDetailViewModel viewModel;
 
   const ChecklistItemTile({
-    required this.item,
+    required this.checklistItem,
     required this.viewModel,
     super.key,
   });
@@ -15,20 +15,22 @@ class ChecklistItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print(
-        'ChecklistItemTile: Building tile for item ID: ${item.id}, Description: ${item.description}, Status: ${item.status}');
+        'ChecklistItemTile: Building tile for item ID: ${checklistItem.id}, Description: ${checklistItem.description}, Status: ${checklistItem.status}');
 
     return ListTile(
-      title: Text(item.description ?? "No Description"),
+      title: Text(checklistItem.description ?? "No Description"),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildCheckbox('Pass', item.status == 'pass', Colors.green, (value) {
+          _buildCheckbox('Pass', checklistItem.status == 'pass', Colors.green,
+              (value) {
             viewModel.updateChecklistItemStatus(
-                item.id!, value! ? 'pass' : null);
+                checklistItem.id!, value! ? 'pass' : null);
           }),
-          _buildCheckbox('Fail', item.status == 'fail', Colors.red, (value) {
+          _buildCheckbox('Fail', checklistItem.status == 'fail', Colors.red,
+              (value) {
             viewModel.updateChecklistItemStatus(
-                item.id!, value! ? 'fail' : null);
+                checklistItem.id!, value! ? 'fail' : null);
           }),
         ],
       ),

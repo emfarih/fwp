@@ -1,14 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:fwp/features/clm/data/models/checklist.dart';
+import 'package:fwp/features/clm/data/models/checklist_item.dart';
 import 'package:fwp/features/clm/domain/use_cases/add_checklist_use_case.dart';
 import '../../domain/use_cases/get_checklist_use_case.dart';
 
-class ChecklistViewModel extends ChangeNotifier {
+class ChecklistListViewModel extends ChangeNotifier {
   final GetChecklistUseCase getChecklistUseCase;
   final AddChecklistUseCase _addChecklistUseCase;
 
   List<Checklist> checklists = [];
-  Checklist? selectedChecklist;
   bool isLoading = false;
   String? errorMessage;
 
@@ -16,7 +16,7 @@ class ChecklistViewModel extends ChangeNotifier {
 
   String description = "";
 
-  ChecklistViewModel(this.getChecklistUseCase, this._addChecklistUseCase);
+  ChecklistListViewModel(this.getChecklistUseCase, this._addChecklistUseCase);
 
   Future<void> fetchChecklists(
       {int? systemId, int? stationId, int? substationId}) async {
@@ -42,25 +42,6 @@ class ChecklistViewModel extends ChangeNotifier {
     } finally {
       isLoading = false;
       print('fetchChecklists: Finished fetching checklists');
-      notifyListeners();
-    }
-  }
-
-  Future<void> fetchChecklistById(int id) async {
-    print('fetchChecklistById: Start fetching checklist with ID $id');
-    isLoading = true;
-    notifyListeners();
-
-    try {
-      print('fetchChecklistById: Calling executeById() with ID $id');
-      selectedChecklist = await getChecklistUseCase.executeById(id);
-      print('fetchChecklistById: Successfully fetched checklist with ID $id');
-    } catch (e) {
-      errorMessage = 'Failed to load checklist';
-      print('fetchChecklistById: Error occurred: $e');
-    } finally {
-      isLoading = false;
-      print('fetchChecklistById: Finished fetching checklist with ID $id');
       notifyListeners();
     }
   }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fwp/features/clm/data/models/checklist.dart';
+import 'package:fwp/features/clm/presentation/view_models/checklist_detail_view_model.dart';
 import 'package:fwp/features/clm/presentation/widgets/clm_list_tile.dart'; // Import CLMListTile
 import 'package:fwp/routes.dart';
 import 'package:provider/provider.dart';
-import '../view_models/checklist_view_model.dart';
+import '../view_models/checklists_list_view_model.dart';
 
 class ChecklistsListScreen extends StatelessWidget {
   const ChecklistsListScreen({super.key});
@@ -14,7 +15,7 @@ class ChecklistsListScreen extends StatelessWidget {
     final Checklist checklist =
         ModalRoute.of(context)!.settings.arguments as Checklist;
 
-    final viewModel = Provider.of<ChecklistViewModel>(context);
+    final viewModel = Provider.of<ChecklistListViewModel>(context);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Checklists')),
@@ -53,7 +54,12 @@ class ChecklistsListScreen extends StatelessWidget {
                 title: title, // Concatenated title
                 onTap: () {
                   print('Tapped on checklist: $title');
-                  viewModel.selectedChecklist = checklist;
+                  final detailViewModel = Provider.of<ChecklistDetailViewModel>(
+                      context,
+                      listen: false);
+                  detailViewModel.setSelectedChecklist(
+                      checklistItem); // Set selectedChecklist here
+
                   Navigator.pushNamed(
                       context,
                       AppRoutes

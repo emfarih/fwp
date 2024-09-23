@@ -107,4 +107,25 @@ class ChecklistRepository {
       rethrow;
     }
   }
+
+  Future<bool> updateChecklist(Checklist checklist) async {
+    print(
+        'ChecklistRepository: Start updating checklist with ID ${checklist.id}');
+    try {
+      final response = await apiService.put(
+        '/clm/checklists/${checklist.id}',
+        checklist.toJson(), // Make sure you're passing the checklist JSON
+      );
+      if (response.statusCode == 200) {
+        print('ChecklistRepository: Successfully updated checklist');
+        return true;
+      } else {
+        throw Exception(
+            'Failed to update checklist, status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('ChecklistRepository: Error occurred while updating checklist: $e');
+      rethrow;
+    }
+  }
 }

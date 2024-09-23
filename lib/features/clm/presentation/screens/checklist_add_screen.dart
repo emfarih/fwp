@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fwp/features/clm/data/models/checklist.dart';
-import 'package:fwp/features/clm/presentation/view_models/checklist_view_model.dart';
+import 'package:fwp/features/clm/data/models/checklist_item.dart';
+import 'package:fwp/features/clm/presentation/view_models/checklists_list_view_model.dart';
 import 'package:provider/provider.dart';
 
 class ChecklistAddScreen extends StatelessWidget {
@@ -10,7 +11,7 @@ class ChecklistAddScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     print('ChecklistAddScreen: Building UI');
 
-    final viewModel = Provider.of<ChecklistViewModel>(context);
+    final viewModel = Provider.of<ChecklistListViewModel>(context);
 
     // Retrieve the checklist from the arguments
     final Checklist checklist =
@@ -145,7 +146,7 @@ class ChecklistAddScreen extends StatelessWidget {
   }
 
   Future<void> _showAddItemDialog(
-      BuildContext context, ChecklistViewModel viewModel) async {
+      BuildContext context, ChecklistListViewModel viewModel) async {
     final TextEditingController descriptionController = TextEditingController();
 
     print('_showAddItemDialog: Opening dialog');
