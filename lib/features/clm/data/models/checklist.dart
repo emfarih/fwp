@@ -4,11 +4,10 @@ import 'package:fwp/features/clm/data/models/checklist_photo.dart';
 class Checklist {
   final int? id;
   final int? systemId;
-  int? locationTypeId;
-  int? stationId;
-  int? substationId;
+  int? locationId;
   DateTime? date;
   String? inspectorName;
+  String? title;
   String? description;
   List<ChecklistItem>? checklistItems; // Use lowercase for consistency
   final List<Photo>? photos;
@@ -16,11 +15,10 @@ class Checklist {
   Checklist({
     this.id,
     this.systemId,
-    this.locationTypeId,
-    this.stationId,
-    this.substationId,
+    this.locationId,
     this.date,
     this.inspectorName,
+    this.title,
     this.description,
     this.checklistItems, // Updated to lowercase
     this.photos,
@@ -30,11 +28,10 @@ class Checklist {
   Checklist copyWith({
     int? id,
     int? systemId,
-    int? locationTypeId,
-    int? stationId,
-    int? substationId,
+    int? locationId,
     DateTime? date,
     String? inspectorName,
+    String? title,
     String? description,
     List<ChecklistItem>? checklistItems, // Updated to lowercase
     List<Photo>? photos,
@@ -42,11 +39,10 @@ class Checklist {
     return Checklist(
       id: id ?? this.id,
       systemId: systemId ?? this.systemId,
-      locationTypeId: locationTypeId ?? this.locationTypeId,
-      stationId: stationId ?? this.stationId,
-      substationId: substationId ?? this.substationId,
+      locationId: locationId ?? this.locationId,
       date: date ?? this.date,
       inspectorName: inspectorName ?? this.inspectorName,
+      title: title ?? this.title,
       description: description ?? this.description,
       checklistItems:
           checklistItems ?? this.checklistItems, // Updated to lowercase
@@ -56,20 +52,19 @@ class Checklist {
 
   @override
   String toString() {
-    return 'Checklist(id: $id, systemId: $systemId, locationTypeId: $locationTypeId, '
-        'stationId: $stationId, substationId: $substationId, '
-        'description: $description, checklistItems: ${checklistItems?.length}, photos: ${photos?.length})'; // Updated to lowercase
+    return 'Checklist(id: $id, systemId: $systemId, '
+        'locationId: $locationId, '
+        'title: $title, description: $description, checklistItems: ${checklistItems?.length}, photos: ${photos?.length})'; // Updated to lowercase
   }
 
   factory Checklist.fromJson(Map<String, dynamic> json) {
     return Checklist(
       id: json['id'],
       systemId: json['system_id'],
-      locationTypeId: json['location_type_id'],
-      stationId: json['station_id'],
-      substationId: json['substation_id'],
+      locationId: json['location_id'],
       date: json['date'] != null ? DateTime.parse(json['date']) : null,
       inspectorName: json['inspector_name'],
+      title: json['title'],
       description: json['description'],
       checklistItems: (json['checklist_items'] as List<dynamic>?)
           ?.map((item) => ChecklistItem.fromJson(item))
@@ -84,11 +79,10 @@ class Checklist {
     return {
       'id': id,
       'system_id': systemId,
-      'location_type_id': locationTypeId,
-      'station_id': stationId,
-      'substation_id': substationId,
+      'location_id': locationId,
       'date': date?.toIso8601String(),
       'inspector_name': inspectorName,
+      'title': title,
       'description': description,
       'checklist_items': checklistItems
           ?.map((item) => item.toJson())

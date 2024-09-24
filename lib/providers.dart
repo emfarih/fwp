@@ -13,15 +13,12 @@ import 'package:fwp/features/clm/domain/use_cases/get_locations_use_case.dart';
 import 'package:fwp/features/clm/domain/use_cases/get_systems_use_case.dart';
 import 'package:fwp/features/clm/domain/use_cases/get_checklist_templates_use_case.dart';
 import 'package:fwp/features/clm/domain/use_cases/get_checklist_use_case.dart';
-import 'package:fwp/features/clm/domain/use_cases/get_location_types_count_use_case.dart';
-import 'package:fwp/features/clm/domain/use_cases/get_location_types_use_case.dart';
 import 'package:fwp/features/clm/domain/use_cases/update_checklist_use_case.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklist_detail_view_model.dart';
-import 'package:fwp/features/clm/presentation/view_models/checklist_template_add_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklist_template_detail_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklist_templates_list_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklists_list_view_model.dart';
-import 'package:fwp/features/clm/presentation/view_models/location_type_view_model.dart';
+import 'package:fwp/features/clm/presentation/view_models/locations_list_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/system_view_model.dart';
 import 'package:fwp/shared/services/api_service.dart';
 import 'package:provider/provider.dart';
@@ -100,16 +97,6 @@ class AppProvider {
           Provider.of<LocationRepository>(context, listen: false),
         ),
       ),
-      Provider<GetLocationTypesCountUseCase>(
-        create: (context) => GetLocationTypesCountUseCase(
-          Provider.of<SystemRepository>(context, listen: false),
-        ),
-      ),
-      Provider<GetLocationTypesUseCase>(
-        create: (context) => GetLocationTypesUseCase(
-          Provider.of<LocationTypeRepository>(context, listen: false),
-        ),
-      ),
       Provider<GetChecklistUseCase>(
         create: (context) => GetChecklistUseCase(
           Provider.of<ChecklistRepository>(context, listen: false),
@@ -146,12 +133,12 @@ class AppProvider {
       ),
       ChangeNotifierProvider<SystemViewModel>(
         create: (context) => SystemViewModel(
-            Provider.of<GetSystemsUseCase>(context, listen: false),
-            Provider.of<GetLocationTypesCountUseCase>(context, listen: false)),
+          Provider.of<GetSystemsUseCase>(context, listen: false),
+        ),
       ),
-      ChangeNotifierProvider<LocationTypeViewModel>(
-        create: (context) => LocationTypeViewModel(
-          Provider.of<GetLocationTypesUseCase>(context, listen: false),
+      ChangeNotifierProvider<LocationsListViewModel>(
+        create: (context) => LocationsListViewModel(
+          Provider.of<GetLocationsUseCase>(context, listen: false),
         ),
       ),
       ChangeNotifierProvider<ChecklistListViewModel>(
