@@ -24,17 +24,13 @@ class SplashScreen extends StatelessWidget {
             final roleId = snapshot.data;
             print('SplashScreen: role_id found - $roleId');
 
-            // Navigate based on the role ID using named routes
+            // Navigate based on the role ID
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (roleId == 2 || roleId == 1) {
-                // Remove the back button by setting the 'system_list' route as the root.
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  AppRoutes.checklistTemplatesList,
-                  (Route<dynamic> route) =>
-                      false, // Removes all previous routes
-                );
+                // Navigate to MainScreen
+                Navigator.of(context).pushReplacementNamed(AppRoutes.home);
               } else {
-// Navigate to LoginScreen in case of error or null data
+                // Navigate to LoginScreen in case of error or null data
                 Navigator.of(context).pushReplacementNamed(AppRoutes.login);
               }
             });
