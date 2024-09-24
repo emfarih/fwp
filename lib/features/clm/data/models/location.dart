@@ -1,19 +1,24 @@
-class Substation {
-  final int id;
-  final String shortName;
-  final String fullName;
+// data/models/location.dart
 
-  Substation({
+class Location {
+  final int id;
+  final String? shortName;
+  final String fullName;
+  final int typeId;
+
+  Location({
     required this.id,
-    required this.shortName,
+    this.shortName,
     required this.fullName,
+    required this.typeId,
   });
 
-  factory Substation.fromJson(Map<String, dynamic> json) {
-    return Substation(
+  factory Location.fromJson(Map<String, dynamic> json) {
+    return Location(
       id: json['id'],
       shortName: json['short_name'],
       fullName: json['full_name'],
+      typeId: json['type_id'],
     );
   }
 
@@ -22,6 +27,7 @@ class Substation {
       'id': id,
       'short_name': shortName,
       'full_name': fullName,
+      'type_id': typeId,
     };
   }
 }

@@ -1,15 +1,14 @@
-// models/checklist_template.dart
 class ChecklistTemplate {
   final int id;
   final int systemId;
-  final int? locationId;
+  final int locationId;
   final String? title;
   final String? description;
 
   ChecklistTemplate({
     required this.id,
     required this.systemId,
-    this.locationId,
+    required this.locationId,
     this.title,
     this.description,
   });
@@ -22,5 +21,15 @@ class ChecklistTemplate {
       title: json['title'],
       description: json['description'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'system_id': systemId,
+      'location_id': locationId,
+      'title': title,
+      'description': description,
+    };
   }
 }

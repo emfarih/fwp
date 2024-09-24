@@ -3,10 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:fwp/features/clm/data/models/checklist_template.dart';
 import 'package:fwp/features/clm/domain/use_cases/get_checklist_templates_use_case.dart';
 
-class ChecklistTemplatesViewModel extends ChangeNotifier {
+class ChecklistTemplatesListViewModel extends ChangeNotifier {
   final GetChecklistTemplatesUseCase getChecklistTemplatesUseCase;
 
-  ChecklistTemplatesViewModel(this.getChecklistTemplatesUseCase);
+  ChecklistTemplatesListViewModel(this.getChecklistTemplatesUseCase);
 
   List<ChecklistTemplate> _checklistTemplates = [];
   List<ChecklistTemplate> get checklistTemplates => _checklistTemplates;

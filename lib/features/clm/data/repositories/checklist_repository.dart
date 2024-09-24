@@ -176,4 +176,29 @@ class ChecklistRepository {
       rethrow;
     }
   }
+
+  Future<bool> createChecklistTemplate(ChecklistTemplate template) async {
+  try {
+    print('Attempting to create checklist template: ${template.toJson()}'); // Log the template being created
+    
+    final response = await apiService.post(
+      '/clm/checklist_templates',
+      body: jsonEncode(template.toJson()), // Make sure to implement the toJson method in ChecklistTemplate
+    );
+
+    print('Received response: ${response.statusCode}'); // Log the status code of the response
+
+    if (response.statusCode == 201) {
+      print('Checklist template created successfully.');
+      return true;
+    } else {
+      print('Failed to create checklist template, status code: ${response.statusCode}');
+      throw Exception('Failed to create checklist template, status code: ${response.statusCode}');
+    }
+  } catch (e) {
+    print('Error occurred while creating checklist template: $e');
+    rethrow;
+  }
+}
+
 }
