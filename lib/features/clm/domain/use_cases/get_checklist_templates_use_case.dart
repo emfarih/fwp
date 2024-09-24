@@ -7,7 +7,7 @@ class GetChecklistTemplatesUseCase {
 
   GetChecklistTemplatesUseCase(this.repository);
 
-  Future<List<ChecklistTemplate>> call() {
-    return repository.getChecklistTemplates();
+  Future<List<ChecklistTemplate>> call(int limit, int offset) {
+    return repository.getChecklistTemplates(limit, offset);
   }
 }

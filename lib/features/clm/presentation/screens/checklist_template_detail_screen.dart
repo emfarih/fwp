@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fwp/features/clm/data/models/checklist_template_item.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklist_template_detail_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -12,48 +13,92 @@ class ChecklistTemplateDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(template?.title ?? 'Template Details'),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Title: ${template?.title ?? 'No Title'}',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Description: ${template?.description ?? 'No Description'}',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'System ID: ${template?.systemId ?? 'No System ID'}',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Location ID: ${template?.locationId ?? 'No Location ID'}',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 16),
-            // Display the checklist items with name and description
-            Expanded(
-              child: ListView.builder(
-                itemCount: template?.items.length,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                template?.title ?? 'No Title',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                template?.description ?? 'No Description',
+                style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+              ),
+              SizedBox(height: 16),
+              _buildInfoRow('System ID:',
+                  template?.systemId?.toString() ?? 'No System ID'),
+              _buildInfoRow('Location ID:',
+                  template?.locationId?.toString() ?? 'No Location ID'),
+              SizedBox(height: 16),
+              Text(
+                'Checklist Items',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+              SizedBox(height: 8),
+              Divider(),
+              SizedBox(height: 8),
+              // Display the checklist items with name and description
+              ListView.builder(
+                itemCount: template?.items.length ?? 0,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(), // Prevent scrolling
                 itemBuilder: (context, index) {
                   final item = template?.items[index];
-                  return ListTile(
-                    title: Text(item?.title ??
-                        'No Name'), // Assuming item has a 'name' field
-                    subtitle: Text(item?.description ?? 'No Description'),
-                  );
+                  return _buildChecklistItem(item);
                 },
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChecklistItem(ChecklistTemplateItem? item) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 4.0),
+      child: ListTile(
+        title: Text(item?.title ?? 'No Name',
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(item?.description ?? 'No Description'),
+        contentPadding: EdgeInsets.all(12.0),
       ),
     );
   }

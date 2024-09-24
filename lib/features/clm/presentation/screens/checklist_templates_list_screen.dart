@@ -5,7 +5,46 @@ import 'package:fwp/routes.dart';
 import 'package:provider/provider.dart';
 import 'package:fwp/features/clm/presentation/widgets/clm_list_tile.dart';
 
-class ChecklistTemplatesListScreen extends StatelessWidget {
+class ChecklistTemplatesListScreen extends StatefulWidget {
+  @override
+  _ChecklistTemplatesListScreenState createState() =>
+      _ChecklistTemplatesListScreenState();
+}
+
+class _ChecklistTemplatesListScreenState
+    extends State<ChecklistTemplatesListScreen> {
+  late ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+
+    // Add a listener to the scroll controller
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        _loadMoreTemplates();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _loadMoreTemplates() {
+    final viewModel =
+        Provider.of<ChecklistTemplatesListViewModel>(context, listen: false);
+    if (!viewModel.isLoading && !viewModel.isLastPage) {
+      print('Loading more checklist templates...');
+      viewModel
+          .fetchMoreChecklistTemplates(); // Implement this method in your ViewModel
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<ChecklistTemplatesListViewModel>(context);
@@ -21,15 +60,24 @@ class ChecklistTemplatesListScreen extends StatelessWidget {
       ),
       body: Consumer<ChecklistTemplatesListViewModel>(
         builder: (context, viewModel, child) {
-          if (viewModel.isLoading) {
+          if (viewModel.isLoading && viewModel.checklistTemplates.isEmpty) {
             return Center(child: CircularProgressIndicator());
           } else if (viewModel.errorMessage != null) {
             return Center(child: Text('Error: ${viewModel.errorMessage}'));
           } else {
             final templates = viewModel.checklistTemplates;
             return ListView.builder(
-              itemCount: templates.length,
+              controller: _scrollController, // Set the scroll controller
+              itemCount: templates.length +
+                  (viewModel.isLoading
+                      ? 1
+                      : 0), // Show loading indicator if loading more
               itemBuilder: (context, index) {
+                if (index == templates.length) {
+                  // Show a loading indicator at the bottom
+                  return const Center(child: CircularProgressIndicator());
+                }
+
                 final template = templates[index];
                 return CLMListTile(
                   title: template.title ?? 'No Title',

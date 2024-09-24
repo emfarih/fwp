@@ -135,10 +135,15 @@ class ChecklistRepository {
   }
 
   // Fetch checklist templates
-  Future<List<ChecklistTemplate>> getChecklistTemplates() async {
-    print('ChecklistRepository: Start fetching checklist templates');
+  Future<List<ChecklistTemplate>> getChecklistTemplates(
+      int limit, int offset) async {
+    print(
+        'ChecklistRepository: Start fetching checklist templates with limit: $limit and offset: $offset');
     try {
-      final response = await apiService.get('/clm/checklist_templates');
+      // Include limit and offset in the API request
+      final response = await apiService
+          .get('/clm/checklist_templates?limit=$limit&offset=$offset');
+
       print(
           'ChecklistRepository: Received response with status code ${response.statusCode}');
 
@@ -178,27 +183,31 @@ class ChecklistRepository {
   }
 
   Future<bool> createChecklistTemplate(ChecklistTemplate template) async {
-  try {
-    print('Attempting to create checklist template: ${template.toJson()}'); // Log the template being created
-    
-    final response = await apiService.post(
-      '/clm/checklist_templates',
-      body: jsonEncode(template.toJson()), // Make sure to implement the toJson method in ChecklistTemplate
-    );
+    try {
+      print(
+          'Attempting to create checklist template: ${template.toJson()}'); // Log the template being created
 
-    print('Received response: ${response.statusCode}'); // Log the status code of the response
+      final response = await apiService.post(
+        '/clm/checklist_templates',
+        body: jsonEncode(template
+            .toJson()), // Make sure to implement the toJson method in ChecklistTemplate
+      );
 
-    if (response.statusCode == 201) {
-      print('Checklist template created successfully.');
-      return true;
-    } else {
-      print('Failed to create checklist template, status code: ${response.statusCode}');
-      throw Exception('Failed to create checklist template, status code: ${response.statusCode}');
+      print(
+          'Received response: ${response.statusCode}'); // Log the status code of the response
+
+      if (response.statusCode == 201) {
+        print('Checklist template created successfully.');
+        return true;
+      } else {
+        print(
+            'Failed to create checklist template, status code: ${response.statusCode}');
+        throw Exception(
+            'Failed to create checklist template, status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error occurred while creating checklist template: $e');
+      rethrow;
     }
-  } catch (e) {
-    print('Error occurred while creating checklist template: $e');
-    rethrow;
   }
-}
-
 }

@@ -144,13 +144,6 @@ class AppProvider {
       ChangeNotifierProvider<ChecklistTemplateDetailViewModel>(
         create: (context) => ChecklistTemplateDetailViewModel(),
       ),
-      ChangeNotifierProvider<ChecklistTemplateAddViewModel>(
-        create: (context) => ChecklistTemplateAddViewModel(
-          Provider.of<AddChecklistTemplateUseCase>(context, listen: false),
-          Provider.of<GetSystemsUseCase>(context, listen: false),
-          Provider.of<GetLocationsUseCase>(context, listen: false),
-        ),
-      ),
       ChangeNotifierProvider<SystemViewModel>(
         create: (context) => SystemViewModel(
             Provider.of<GetSystemsUseCase>(context, listen: false),
