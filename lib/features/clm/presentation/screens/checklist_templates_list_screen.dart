@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fwp/features/aam/presentation/view_models/auth_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklist_template_detail_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklist_templates_list_view_model.dart';
 import 'package:fwp/routes.dart';
@@ -48,6 +49,7 @@ class _ChecklistTemplatesListScreenState
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<ChecklistTemplatesListViewModel>(context);
+    final authViewModel = Provider.of<AuthViewModel>(context);
 
     // Fetch checklist templates only if not already loaded
     if (viewModel.checklistTemplates.isEmpty && !viewModel.isLoading) {
@@ -57,6 +59,18 @@ class _ChecklistTemplatesListScreenState
     return Scaffold(
       appBar: AppBar(
         title: Text('Checklist Templates'),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+            onPressed: () async {
+              await authViewModel.logout(); // Call the logout method
+              Navigator.pushReplacementNamed(
+                  context, AppRoutes.login); // Navigate to login
+            },
+          ),
+        ],
       ),
       body: Consumer<ChecklistTemplatesListViewModel>(
         builder: (context, viewModel, child) {

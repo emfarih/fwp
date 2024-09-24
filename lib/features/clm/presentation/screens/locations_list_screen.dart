@@ -65,7 +65,7 @@ class LocationsListScreen extends StatelessWidget {
                   // Navigate to checklists list screen
                   Navigator.pushNamed(
                     context,
-                    AppRoutes.checklistsList,
+                    AppRoutes.checklistDatesList,
                     arguments: checklist, // Pass the updated checklist
                   );
                 },

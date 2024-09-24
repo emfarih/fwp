@@ -210,4 +210,53 @@ class ChecklistRepository {
       rethrow;
     }
   }
+
+  Future<List<String>> getChecklistDates(int systemId, int locationId,
+      {int limit = 10, int offset = 0}) async {
+    print(
+        'ChecklistDatesRepository: Start fetching checklist dates for systemId: $systemId, locationId: $locationId with limit: $limit and offset: $offset');
+
+    try {
+      // Include systemId, locationId, limit, and offset in the API request
+      final response = await apiService.get(
+          '/clm/checklist_dates?system_id=$systemId&location_id=$locationId&limit=$limit&offset=$offset');
+
+      print(
+          'ChecklistDatesRepository: Received response with status code ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonData = jsonDecode(response.body);
+        final List<dynamic> datesData = jsonData['checklist_dates'];
+
+        print('ChecklistDatesRepository: Raw checklist dates data: $datesData');
+
+        if (datesData is! List) {
+          throw Exception('Invalid data format: Expected a list');
+        }
+
+        // Extracting checklist dates as a list of strings
+        List<String> checklistDates = [];
+        for (var item in datesData) {
+          print('ChecklistDatesRepository: Checking item: $item');
+          if (item is Map<String, dynamic>) {
+            // Assuming the date is under the key 'date' in the response
+            checklistDates.add(item['date'] as String);
+          } else {
+            print('ChecklistDatesRepository: Invalid item: $item');
+          }
+        }
+
+        print(
+            'ChecklistDatesRepository: Successfully parsed ${checklistDates.length} checklist dates');
+        return checklistDates;
+      } else {
+        throw Exception(
+            'Failed to load checklist dates, status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print(
+          'ChecklistDatesRepository: Error occurred while fetching checklist dates: $e');
+      rethrow;
+    }
+  }
 }

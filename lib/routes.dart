@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fwp/features/aam/presentation/screen/login_screen.dart';
+import 'package:fwp/features/clm/presentation/screens/checklist_dates_list_screen.dart';
 import 'package:fwp/features/clm/presentation/screens/checklist_detail_screen.dart';
 import 'package:fwp/features/clm/presentation/screens/checklist_template_add_screen.dart';
 import 'package:fwp/features/clm/presentation/screens/checklist_template_detail_screen.dart';
@@ -18,7 +19,7 @@ class AppRoutes {
   static const String checklistTemplateDetail = '/checklist_template_detail';
   static const String systemsList = '/systems_list';
   static const String locationsList = '/locations_list';
-  static const String substationsList = '/substations_list';
+  static const String checklistDatesList = '/checklist_dates_list';
   static const String checklistsList = '/checklists_list';
   static const String checklistAdd = '/checklist_add';
   static const String checklistDetail = '/checklist_detail';
@@ -31,9 +32,9 @@ class AppRoutes {
       checklistTemplatesList: (context) => ChecklistTemplatesListScreen(),
       checklistTemplateAdd: (context) => ChecklistTemplateAddScreen(),
       checklistTemplateDetail: (context) => ChecklistTemplateDetailScreen(),
-      // Pass the callback to SystemsListScreen
       systemsList: (context) => const SystemsListScreen(),
       locationsList: (context) => const LocationsListScreen(),
+      checklistDatesList: (context) => const ChecklistDatesListScreen(),
       checklistDetail: (context) => const ChecklistDetailScreen(),
     };
   }

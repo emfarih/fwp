@@ -9,11 +9,13 @@ import 'package:fwp/features/clm/data/repositories/location_repository.dart';
 import 'package:fwp/features/clm/data/repositories/system_repository.dart';
 import 'package:fwp/features/clm/domain/use_cases/add_checklist_template_use_case.dart';
 import 'package:fwp/features/clm/domain/use_cases/add_checklist_use_case.dart';
+import 'package:fwp/features/clm/domain/use_cases/get_checklist_dates_use_case.dart';
 import 'package:fwp/features/clm/domain/use_cases/get_locations_use_case.dart';
 import 'package:fwp/features/clm/domain/use_cases/get_systems_use_case.dart';
 import 'package:fwp/features/clm/domain/use_cases/get_checklist_templates_use_case.dart';
 import 'package:fwp/features/clm/domain/use_cases/get_checklist_use_case.dart';
 import 'package:fwp/features/clm/domain/use_cases/update_checklist_use_case.dart';
+import 'package:fwp/features/clm/presentation/view_models/checklist_dates_list_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklist_detail_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklist_template_detail_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklist_templates_list_view_model.dart';
@@ -97,6 +99,11 @@ class AppProvider {
           Provider.of<LocationRepository>(context, listen: false),
         ),
       ),
+      Provider<GetChecklistDatesUseCase>(
+        create: (context) => GetChecklistDatesUseCase(
+          Provider.of<ChecklistRepository>(context, listen: false),
+        ),
+      ),
       Provider<GetChecklistUseCase>(
         create: (context) => GetChecklistUseCase(
           Provider.of<ChecklistRepository>(context, listen: false),
@@ -139,6 +146,11 @@ class AppProvider {
       ChangeNotifierProvider<LocationsListViewModel>(
         create: (context) => LocationsListViewModel(
           Provider.of<GetLocationsUseCase>(context, listen: false),
+        ),
+      ),
+      ChangeNotifierProvider<ChecklistDatesListViewModel>(
+        create: (context) => ChecklistDatesListViewModel(
+          Provider.of<GetChecklistDatesUseCase>(context, listen: false),
         ),
       ),
       ChangeNotifierProvider<ChecklistListViewModel>(

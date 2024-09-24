@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fwp/features/aam/presentation/view_models/auth_view_model.dart';
 import 'package:fwp/features/clm/data/models/checklist.dart';
 import 'package:fwp/features/clm/presentation/view_models/system_view_model.dart';
 import 'package:fwp/features/clm/presentation/widgets/clm_list_tile.dart';
@@ -11,11 +12,24 @@ class SystemsListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final systemViewModel = Provider.of<SystemViewModel>(context);
+    final authViewModel = Provider.of<AuthViewModel>(context);
 
+    print('SystemsListScreen: Building UI');
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text('Systems'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+            onPressed: () async {
+              await authViewModel.logout(); // Call the logout method
+              Navigator.pushReplacementNamed(
+                  context, AppRoutes.login); // Navigate to login
+            },
+          ),
+        ],
       ),
       body: FutureBuilder<void>(
         future: systemViewModel.fetchSystems(),
