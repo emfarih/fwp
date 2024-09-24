@@ -29,7 +29,7 @@ class SplashScreen extends StatelessWidget {
               if (roleId == 2 || roleId == 1) {
                 // Remove the back button by setting the 'system_list' route as the root.
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  AppRoutes.systemsList,
+                  AppRoutes.checklistTemplatesList,
                   (Route<dynamic> route) =>
                       false, // Removes all previous routes
                 );

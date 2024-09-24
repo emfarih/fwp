@@ -61,8 +61,8 @@ class LoginScreen extends StatelessWidget {
                     if (roleId == 2 || roleId == 1) {
                       print(
                           'Login successful. Navigating to systems list.'); // Log successful login
-                      Navigator.of(context)
-                          .pushReplacementNamed(AppRoutes.systemsList);
+                      Navigator.of(context).pushReplacementNamed(
+                          AppRoutes.checklistTemplatesList);
                     } else {
                       print(
                           'Login failed. Invalid credentials or role.'); // Log failure

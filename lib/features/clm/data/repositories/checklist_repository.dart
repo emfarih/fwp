@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:fwp/features/clm/data/models/checklist.dart';
+import 'package:fwp/features/clm/data/models/checklist_template.dart';
 import 'package:fwp/shared/services/api_service.dart';
 
 class ChecklistRepository {
@@ -7,6 +8,7 @@ class ChecklistRepository {
 
   ChecklistRepository(this.apiService);
 
+  // Fetch checklists based on optional query parameters
   Future<List<Checklist>> getChecklists(
       {int? systemId, int? stationId, int? substationId}) async {
     print('ChecklistRepository: Start fetching checklists');
@@ -63,6 +65,7 @@ class ChecklistRepository {
     }
   }
 
+  // Fetch a checklist by its ID
   Future<Checklist> getChecklistById(int id) async {
     print('ChecklistRepository: Start fetching checklist with ID $id');
     try {
@@ -85,6 +88,7 @@ class ChecklistRepository {
     }
   }
 
+  // Create a new checklist
   Future<bool> createChecklist(Checklist checklist) async {
     print('ChecklistRepository: Start creating checklist');
     try {
@@ -108,13 +112,14 @@ class ChecklistRepository {
     }
   }
 
+  // Update an existing checklist
   Future<bool> updateChecklist(Checklist checklist) async {
     print(
         'ChecklistRepository: Start updating checklist with ID ${checklist.id}');
     try {
       final response = await apiService.put(
         '/clm/checklists/${checklist.id}',
-        checklist.toJson(), // Make sure you're passing the checklist JSON
+        checklist.toJson(),
       );
       if (response.statusCode == 200) {
         print('ChecklistRepository: Successfully updated checklist');
@@ -125,6 +130,49 @@ class ChecklistRepository {
       }
     } catch (e) {
       print('ChecklistRepository: Error occurred while updating checklist: $e');
+      rethrow;
+    }
+  }
+
+  // Fetch checklist templates
+  Future<List<ChecklistTemplate>> getChecklistTemplates() async {
+    print('ChecklistRepository: Start fetching checklist templates');
+    try {
+      final response = await apiService.get('/clm/checklist_templates');
+      print(
+          'ChecklistRepository: Received response with status code ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonData = jsonDecode(response.body);
+        final List<dynamic> templatesData = jsonData['checklist_templates'];
+
+        print(
+            'ChecklistRepository: Raw checklist templates data: $templatesData');
+
+        if (templatesData is! List) {
+          throw Exception('Invalid data format: Expected a list');
+        }
+
+        List<ChecklistTemplate> parsedTemplates = [];
+        for (var item in templatesData) {
+          print('ChecklistRepository: Checking item: $item');
+          if (item is Map<String, dynamic>) {
+            parsedTemplates.add(ChecklistTemplate.fromJson(item));
+          } else {
+            print('ChecklistRepository: Invalid item: $item');
+          }
+        }
+
+        print(
+            'ChecklistRepository: Successfully parsed ${parsedTemplates.length} checklist templates');
+        return parsedTemplates;
+      } else {
+        throw Exception(
+            'Failed to load checklist templates, status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print(
+          'ChecklistRepository: Error occurred while fetching checklist templates: $e');
       rethrow;
     }
   }
