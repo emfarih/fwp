@@ -1,38 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:fwp/features/clm/data/models/checklist_template.dart';
 import 'package:fwp/features/clm/data/models/checklist_template_item.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklist_template_add_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklist_templates_list_view_model.dart';
 import 'package:provider/provider.dart';
-import 'package:fwp/features/clm/data/models/checklist_template.dart';
 
-class ChecklistTemplateAddScreen extends StatefulWidget {
-  @override
-  _ChecklistTemplateAddScreenState createState() =>
-      _ChecklistTemplateAddScreenState();
-}
-
-class _ChecklistTemplateAddScreenState
-    extends State<ChecklistTemplateAddScreen> {
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final List<ChecklistTemplateItem> _checklistTemplateItems = [];
-
-  int? selectedSystemId;
-  int? selectedLocationId;
-
-  @override
-  void initState() {
-    super.initState();
-    // Fetch systems and locations
-    final viewModel =
-        Provider.of<ChecklistTemplateAddViewModel>(context, listen: false);
-    viewModel.fetchSystems();
-    viewModel.fetchLocations();
-  }
-
+class ChecklistTemplateAddScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<ChecklistTemplateAddViewModel>(context);
+    final addViewModel = Provider.of<ChecklistTemplateAddViewModel>(context);
+    final listViewModel = Provider.of<ChecklistTemplatesListViewModel>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -42,76 +19,68 @@ class _ChecklistTemplateAddScreenState
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            if (viewModel.isLoading)
+            if (addViewModel.isLoading)
               Center(child: CircularProgressIndicator())
-            else if (viewModel.errorMessage != null)
-              Center(child: Text(viewModel.errorMessage!))
+            else if (addViewModel.errorMessage != null)
+              Center(child: Text(addViewModel.errorMessage!))
             else ...[
               DropdownButtonFormField<int>(
-                value: selectedSystemId,
+                value: addViewModel.selectedSystemId,
                 decoration: InputDecoration(labelText: 'Select System'),
                 onChanged: (int? newValue) {
-                  setState(() {
-                    selectedSystemId = newValue;
-                  });
+                  addViewModel.setSelectedSystemId(newValue);
                 },
-                items: viewModel.systems.map((system) {
+                items: addViewModel.systems.map((system) {
                   return DropdownMenuItem<int>(
                     value: system.id,
                     child: Text(system.fullName),
                   );
                 }).toList(),
               ),
-              const SizedBox(height: 16), // Added spacing
+              const SizedBox(height: 16),
               DropdownButtonFormField<int>(
-                value: selectedLocationId,
+                value: addViewModel.selectedLocationId,
                 decoration: InputDecoration(labelText: 'Select Location'),
                 onChanged: (int? newValue) {
-                  setState(() {
-                    selectedLocationId = newValue;
-                  });
+                  addViewModel.setSelectedLocationId(newValue);
                 },
-                items: viewModel.locations.map((location) {
+                items: addViewModel.locations.map((location) {
                   return DropdownMenuItem<int>(
                     value: location.id,
                     child: Text(location.fullName),
                   );
                 }).toList(),
               ),
-              const SizedBox(height: 16), // Added spacing
+              const SizedBox(height: 16),
               TextField(
-                controller: _titleController,
+                controller: addViewModel.titleController,
                 decoration: InputDecoration(labelText: 'Title'),
               ),
-              const SizedBox(height: 8), // Added spacing
+              const SizedBox(height: 8),
               TextField(
-                controller: _descriptionController,
+                controller: addViewModel.descriptionController,
                 decoration: InputDecoration(labelText: 'Description'),
                 maxLines: 3,
               ),
-              const SizedBox(height: 8), // Added spacing
+              const SizedBox(height: 8),
               ElevatedButton(
-                onPressed: _showAddItemDialog,
+                onPressed: () => _showAddItemDialog(context, addViewModel),
                 child: const Text(
                   'Add Item',
                   style: TextStyle(color: Colors.white),
                 ),
               ),
-              const SizedBox(height: 20), // Added spacing
+              const SizedBox(height: 20),
               Expanded(
                 child: ListView.builder(
-                  itemCount: _checklistTemplateItems.length,
+                  itemCount: addViewModel.checklistTemplateItems.length,
                   itemBuilder: (context, index) {
-                    final item = _checklistTemplateItems[index];
+                    final item = addViewModel.checklistTemplateItems[index];
                     return ListTile(
                       title: Text(item.title ?? 'No Title'),
                       trailing: IconButton(
                         icon: Icon(Icons.remove_circle),
-                        onPressed: () {
-                          setState(() {
-                            _checklistTemplateItems.removeAt(index);
-                          });
-                        },
+                        onPressed: () => addViewModel.removeItem(index),
                       ),
                     );
                   },
@@ -123,32 +92,27 @@ class _ChecklistTemplateAddScreenState
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          // Check for selection and input values
-          if (selectedSystemId == null || selectedLocationId == null) {
+          if (addViewModel.selectedSystemId == null ||
+              addViewModel.selectedLocationId == null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Please select a system and location')),
             );
             return;
           }
 
-          // Handle adding the checklist template
           final newTemplate = ChecklistTemplate(
             id: 0,
-            systemId: selectedSystemId!,
-            locationId: selectedLocationId!,
-            title: _titleController.text,
-            description: _descriptionController.text,
+            systemId: addViewModel.selectedSystemId!,
+            locationId: addViewModel.selectedLocationId!,
+            title: addViewModel.titleController.text,
+            description: addViewModel.descriptionController.text,
+            items: addViewModel.checklistTemplateItems,
           );
 
-          final success = await viewModel.addChecklistTemplate(newTemplate);
+          final success = await addViewModel.addChecklistTemplate(newTemplate);
 
           if (success) {
-// Notify the list ViewModel to refresh
-            final listViewModel = Provider.of<ChecklistTemplatesListViewModel>(
-                context,
-                listen: false);
             listViewModel.fetchChecklistTemplates();
-
             Navigator.pop(context);
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -164,7 +128,8 @@ class _ChecklistTemplateAddScreenState
     );
   }
 
-  Future<void> _showAddItemDialog() async {
+  Future<void> _showAddItemDialog(
+      BuildContext context, ChecklistTemplateAddViewModel viewModel) async {
     final TextEditingController titleController = TextEditingController();
     final TextEditingController descriptionController = TextEditingController();
 
@@ -180,7 +145,7 @@ class _ChecklistTemplateAddScreenState
                 controller: titleController,
                 decoration: const InputDecoration(labelText: 'Title'),
               ),
-              const SizedBox(height: 8), // Added spacing
+              const SizedBox(height: 8),
               TextField(
                 controller: descriptionController,
                 decoration: const InputDecoration(labelText: 'Description'),
@@ -196,9 +161,7 @@ class _ChecklistTemplateAddScreenState
                     title: titleController.text,
                     description: descriptionController.text,
                   );
-                  setState(() {
-                    _checklistTemplateItems.add(checklistTemplateItem);
-                  });
+                  viewModel.addItem(checklistTemplateItem);
                   Navigator.of(context).pop();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(

@@ -18,6 +18,7 @@ import 'package:fwp/features/clm/domain/use_cases/get_location_types_use_case.da
 import 'package:fwp/features/clm/domain/use_cases/update_checklist_use_case.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklist_detail_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklist_template_add_view_model.dart';
+import 'package:fwp/features/clm/presentation/view_models/checklist_template_detail_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklist_templates_list_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklists_list_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/location_type_view_model.dart';
@@ -139,6 +140,9 @@ class AppProvider {
         create: (context) => ChecklistTemplatesListViewModel(
           Provider.of<GetChecklistTemplatesUseCase>(context, listen: false),
         ),
+      ),
+      ChangeNotifierProvider<ChecklistTemplateDetailViewModel>(
+        create: (context) => ChecklistTemplateDetailViewModel(),
       ),
       ChangeNotifierProvider<ChecklistTemplateAddViewModel>(
         create: (context) => ChecklistTemplateAddViewModel(

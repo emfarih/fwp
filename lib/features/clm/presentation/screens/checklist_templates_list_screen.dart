@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fwp/features/clm/presentation/view_models/checklist_template_detail_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklist_templates_list_view_model.dart';
 import 'package:fwp/routes.dart';
 import 'package:provider/provider.dart';
@@ -33,7 +34,21 @@ class ChecklistTemplatesListScreen extends StatelessWidget {
                 return CLMListTile(
                   title: template.title ?? 'No Title',
                   subtitle: template.description ?? 'No Description',
-                  onTap: () {},
+                  onTap: () {
+                    print('Tapped on checklist template: ${template.title}');
+                    final checklistTemplateDetailViewModel =
+                        Provider.of<ChecklistTemplateDetailViewModel>(context,
+                            listen: false);
+                    checklistTemplateDetailViewModel
+                        .setSelectedChecklistTemplate(
+                            template); // Set selectedChecklist here
+
+                    Navigator.pushNamed(
+                        context,
+                        AppRoutes
+                            .checklistTemplateDetail // Replace with your detail route
+                        );
+                  },
                 );
               },
             );
