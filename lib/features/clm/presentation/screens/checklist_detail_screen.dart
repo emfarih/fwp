@@ -12,52 +12,25 @@ class ChecklistDetailScreen extends StatefulWidget {
 
 class _ChecklistDetailScreenState extends State<ChecklistDetailScreen> {
   late TextEditingController inspectorController;
-  late TextEditingController dateController;
 
   @override
   void initState() {
     super.initState();
     final viewModel =
         Provider.of<ChecklistDetailViewModel>(context, listen: false);
+
+    // Initialize the inspector name controller with the view model data
     inspectorController =
         TextEditingController(text: viewModel.selectedChecklist?.inspectorName);
-    dateController = TextEditingController(
-      text: viewModel.selectedChecklist?.date != null
-          ? viewModel.selectedChecklist?.date
-              ?.toLocal()
-              .toString()
-              .split(' ')[0] // Show the date in a yyyy-mm-dd format
-          : '',
-    );
     print(
-        'ChecklistDetailScreen: Initialized with inspector name: ${inspectorController.text} and date: ${dateController.text}');
+        'ChecklistDetailScreen: Initialized with inspector: ${inspectorController.text}');
   }
 
   @override
   void dispose() {
     inspectorController.dispose();
-    dateController.dispose();
     super.dispose();
     print('ChecklistDetailScreen: Disposed controllers.');
-  }
-
-  void _selectDate(BuildContext context) async {
-    final viewModel =
-        Provider.of<ChecklistDetailViewModel>(context, listen: false);
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: viewModel.selectedChecklist?.date ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-    if (pickedDate != null && pickedDate != viewModel.selectedChecklist?.date) {
-      setState(() {
-        dateController.text = pickedDate.toLocal().toString().split(' ')[0];
-      });
-      print('ChecklistDetailScreen: Date selected: ${dateController.text}');
-      // Update the selected checklist in the view model
-      viewModel.selectedChecklist?.date = pickedDate;
-    }
   }
 
   void _showSnackbar(String message) {
@@ -79,8 +52,8 @@ class _ChecklistDetailScreenState extends State<ChecklistDetailScreen> {
           builder: (context, viewModel, child) {
             final selectedChecklist = viewModel.selectedChecklist;
             print(
-                'ChecklistDetailScreen: AppBar title set to: ${selectedChecklist?.description ?? 'Checklist Details'}');
-            return Text(selectedChecklist?.description ?? 'Checklist Details');
+                'ChecklistDetailScreen: AppBar title set to: ${selectedChecklist?.title ?? 'Checklist Details'}');
+            return Text(selectedChecklist?.title ?? 'Checklist Details');
           },
         ),
       ),
@@ -101,39 +74,93 @@ class _ChecklistDetailScreenState extends State<ChecklistDetailScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextField(
-                  controller: inspectorController,
-                  decoration:
-                      const InputDecoration(labelText: 'Inspector Name'),
-                  onChanged: (value) {
-                    print(
-                        'ChecklistDetailScreen: Inspector name changed to: $value');
-                    viewModel.selectedChecklist?.inspectorName = value;
-                  },
+                // Unified card for title, date, description, and inspector name
+                Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  elevation: 3,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Row for Title and Date
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                selectedChecklist.title ?? 'No Title',
+                                style:
+                                    Theme.of(context).textTheme.headlineSmall,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              selectedChecklist.date != null
+                                  ? selectedChecklist.date!
+                                      .toLocal()
+                                      .toString()
+                                      .split(' ')[0]
+                                  : 'No Date Available',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        // Description
+                        Text(
+                          selectedChecklist.description ?? 'No Description',
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                        const SizedBox(height: 16),
+                        // Inspector Name
+                        TextField(
+                          controller: inspectorController,
+                          decoration: InputDecoration(
+                            labelText: 'Inspector Name',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            print(
+                                'ChecklistDetailScreen: Inspector name changed to: $value');
+                            viewModel.selectedChecklist?.inspectorName = value;
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 16),
-                TextField(
-                  controller: dateController,
-                  decoration: const InputDecoration(labelText: 'Date'),
-                  readOnly: true,
-                  onTap: () => _selectDate(context),
-                  onChanged: (value) {
-                    print('ChecklistDetailScreen: Date changed to: $value');
-                  },
-                ),
-                const SizedBox(height: 16),
-                Text('Checklist Items:',
-                    style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 8),
+
+                // Checklist items list
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: selectedChecklist.checklistItems?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      final item = selectedChecklist.checklistItems?[index];
-                      if (item == null) return const SizedBox();
-                      return ChecklistItemTile(
-                          checklistItem: item, viewModel: viewModel);
-                    },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Checklist Items:',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 8),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount:
+                              selectedChecklist.checklistItems?.length ?? 0,
+                          itemBuilder: (context, index) {
+                            final item =
+                                selectedChecklist.checklistItems?[index];
+                            if (item == null) return const SizedBox();
+                            return ChecklistItemTile(
+                                checklistItem: item, viewModel: viewModel);
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -156,8 +183,6 @@ class _ChecklistDetailScreenState extends State<ChecklistDetailScreen> {
             print('ChecklistDetailScreen: Failed to update checklist.');
             _showSnackbar('Failed to update checklist.');
           }
-
-          // Optionally, navigate back or show a success message
         },
         tooltip: 'Submit Changes',
         child: const Icon(Icons.check),

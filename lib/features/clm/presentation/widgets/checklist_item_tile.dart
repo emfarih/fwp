@@ -15,24 +15,53 @@ class ChecklistItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print(
-        'ChecklistItemTile: Building tile for item ID: ${checklistItem.id}, Description: ${checklistItem.description}, Status: ${checklistItem.status}');
+        'ChecklistItemTile: Building tile for item ID: ${checklistItem.id}, Title: ${checklistItem.title}, Description: ${checklistItem.description}, Status: ${checklistItem.status}');
 
-    return ListTile(
-      title: Text(checklistItem.description ?? "No Description"),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildCheckbox('Pass', checklistItem.status == 'pass', Colors.green,
-              (value) {
-            viewModel.updateChecklistItemStatus(
-                checklistItem.id!, value! ? 'pass' : null);
-          }),
-          _buildCheckbox('Fail', checklistItem.status == 'fail', Colors.red,
-              (value) {
-            viewModel.updateChecklistItemStatus(
-                checklistItem.id!, value! ? 'fail' : null);
-          }),
-        ],
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      elevation: 2,
+      margin:
+          const EdgeInsets.symmetric(vertical: 4.0), // Separation between items
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Display the title
+            Text(
+              checklistItem.title ?? "No Title",
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            // Display the description
+            Text(
+              checklistItem.description ?? "No Description",
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 8),
+            // Checkbox options
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                _buildCheckbox(
+                    'Pass', checklistItem.status == 'pass', Colors.green,
+                    (value) {
+                  viewModel.updateChecklistItemStatus(
+                      checklistItem.id!, value! ? 'pass' : null);
+                }),
+                const SizedBox(width: 8),
+                _buildCheckbox(
+                    'Fail', checklistItem.status == 'fail', Colors.red,
+                    (value) {
+                  viewModel.updateChecklistItemStatus(
+                      checklistItem.id!, value! ? 'fail' : null);
+                }),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

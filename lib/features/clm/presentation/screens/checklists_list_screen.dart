@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fwp/features/clm/data/models/checklist.dart';
+import 'package:fwp/features/clm/presentation/view_models/checklist_detail_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklists_list_view_model.dart';
 import 'package:fwp/features/clm/presentation/widgets/clm_list_tile.dart';
+import 'package:fwp/routes.dart';
 import 'package:provider/provider.dart';
 
 class ChecklistListScreen extends StatefulWidget {
@@ -77,7 +79,20 @@ class _ChecklistListScreenState extends State<ChecklistListScreen> {
                       title: checklist.title ?? 'No Title',
                       onTap: () {
                         print('Checklist selected: $checklist');
-                        // Handle checklist selection
+
+                        // Step 1: Set the selected checklist in the ChecklistDetailViewModel
+                        final checklistDetailViewModel =
+                            Provider.of<ChecklistDetailViewModel>(context,
+                                listen: false);
+                        checklistDetailViewModel
+                            .setSelectedChecklist(checklist);
+
+                        // Step 2: Navigate to the checklist detail route
+                        Navigator.pushNamed(
+                          context,
+                          AppRoutes
+                              .checklistDetail, // Assuming '/checklistDetail' is the route name
+                        );
                       },
                     );
                   },

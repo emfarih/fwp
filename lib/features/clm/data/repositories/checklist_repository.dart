@@ -132,7 +132,7 @@ class ChecklistRepository {
         '/clm/checklists/${checklist.id}',
         checklist.toJson(),
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 204) {
         print('ChecklistRepository: Successfully updated checklist');
         return true;
       } else {
