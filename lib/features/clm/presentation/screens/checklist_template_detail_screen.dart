@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fwp/features/clm/data/models/checklist_template_item.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklist_template_detail_view_model.dart';
+import 'package:fwp/features/clm/presentation/view_models/checklist_templates_list_view_model.dart';
 import 'package:provider/provider.dart';
 
 class ChecklistTemplateDetailScreen extends StatelessWidget {
@@ -64,6 +65,23 @@ class ChecklistTemplateDetailScreen extends StatelessWidget {
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          if (template != null) {
+            // Call the delete function from the viewModel
+            await viewModel.deleteChecklistTemplateById(template.id);
+            final listViewModel =
+                Provider.of<ChecklistTemplatesListViewModel>(context);
+            listViewModel.reset();
+            listViewModel.fetchChecklistTemplates();
+            // After deletion, navigate back
+            Navigator.of(context).pop();
+          }
+        },
+        child: Icon(Icons.delete),
+        backgroundColor: Colors.red,
+        tooltip: 'Delete Template',
       ),
     );
   }

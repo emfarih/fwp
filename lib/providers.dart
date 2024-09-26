@@ -4,11 +4,13 @@ import 'package:fwp/features/aam/domain/use_case/get_role_id_use_case.dart';
 import 'package:fwp/features/aam/domain/use_case/login_use_case.dart';
 import 'package:fwp/features/aam/presentation/view_models/auth_view_model.dart';
 import 'package:fwp/features/clm/data/repositories/checklist_repository.dart';
+import 'package:fwp/features/clm/data/repositories/checklist_template_repository.dart';
 import 'package:fwp/features/clm/data/repositories/location_type_repository.dart';
 import 'package:fwp/features/clm/data/repositories/location_repository.dart';
 import 'package:fwp/features/clm/data/repositories/system_repository.dart';
 import 'package:fwp/features/clm/domain/use_cases/add_checklist_template_use_case.dart';
 import 'package:fwp/features/clm/domain/use_cases/add_checklist_use_case.dart';
+import 'package:fwp/features/clm/domain/use_cases/delete_checklist_template_use_case.dart';
 import 'package:fwp/features/clm/domain/use_cases/get_checklist_dates_use_case.dart';
 import 'package:fwp/features/clm/domain/use_cases/get_locations_use_case.dart';
 import 'package:fwp/features/clm/domain/use_cases/get_systems_use_case.dart';
@@ -64,6 +66,11 @@ class AppProvider {
           Provider.of<ApiService>(context, listen: false),
         ),
       ),
+      Provider<ChecklistTemplateRepository>(
+        create: (context) => ChecklistTemplateRepository(
+          Provider.of<ApiService>(context, listen: false),
+        ),
+      ),
     ];
   }
 
@@ -82,12 +89,17 @@ class AppProvider {
       ),
       Provider<GetChecklistTemplatesUseCase>(
         create: (context) => GetChecklistTemplatesUseCase(
-          Provider.of<ChecklistRepository>(context, listen: false),
+          Provider.of<ChecklistTemplateRepository>(context, listen: false),
         ),
       ),
       Provider<AddChecklistTemplateUseCase>(
         create: (context) => AddChecklistTemplateUseCase(
-          Provider.of<ChecklistRepository>(context, listen: false),
+          Provider.of<ChecklistTemplateRepository>(context, listen: false),
+        ),
+      ),
+      Provider<DeleteChecklistTemplateUseCase>(
+        create: (context) => DeleteChecklistTemplateUseCase(
+          Provider.of<ChecklistTemplateRepository>(context, listen: false),
         ),
       ),
       Provider<GetSystemsUseCase>(
@@ -137,7 +149,9 @@ class AppProvider {
         ),
       ),
       ChangeNotifierProvider<ChecklistTemplateDetailViewModel>(
-        create: (context) => ChecklistTemplateDetailViewModel(),
+        create: (context) => ChecklistTemplateDetailViewModel(
+          Provider.of<DeleteChecklistTemplateUseCase>(context, listen: false),
+        ),
       ),
       ChangeNotifierProvider<SystemViewModel>(
         create: (context) => SystemViewModel(

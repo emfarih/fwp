@@ -1,8 +1,8 @@
 import 'package:fwp/features/clm/data/models/checklist_template.dart';
-import 'package:fwp/features/clm/data/repositories/checklist_repository.dart';
+import 'package:fwp/features/clm/data/repositories/checklist_template_repository.dart';
 
 class AddChecklistTemplateUseCase {
-  final ChecklistRepository repository;
+  final ChecklistTemplateRepository repository;
 
   AddChecklistTemplateUseCase(this.repository);
 
