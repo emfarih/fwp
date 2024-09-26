@@ -6,6 +6,7 @@ import 'package:fwp/features/clm/presentation/screens/checklist_detail_screen.da
 import 'package:fwp/features/clm/presentation/screens/checklist_template_add_screen.dart';
 import 'package:fwp/features/clm/presentation/screens/checklist_template_detail_screen.dart';
 import 'package:fwp/features/clm/presentation/screens/checklist_templates_list_screen.dart';
+import 'package:fwp/features/clm/presentation/screens/checklists_list_screen.dart';
 import 'package:fwp/features/clm/presentation/screens/locations_list_screen.dart';
 import 'package:fwp/features/clm/presentation/screens/system_list_screen.dart';
 import 'package:fwp/home_screen.dart';
@@ -36,6 +37,7 @@ class AppRoutes {
       systemsList: (context) => const SystemsListScreen(),
       locationsList: (context) => const LocationsListScreen(),
       checklistDatesList: (context) => const ChecklistDatesListScreen(),
+      checklistsList: (context) => const ChecklistListScreen(),
       checklistAdd: (context) => ChecklistAddScreen(),
       checklistDetail: (context) => const ChecklistDetailScreen(),
     };

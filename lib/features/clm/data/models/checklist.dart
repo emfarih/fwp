@@ -1,5 +1,6 @@
 import 'package:fwp/features/clm/data/models/checklist_item.dart';
 import 'package:fwp/features/clm/data/models/checklist_photo.dart';
+import 'package:fwp/features/clm/utils.dart';
 
 class Checklist {
   final int? id;
@@ -87,17 +88,5 @@ class Checklist {
       'checklist_items': checklistItems?.map((item) => item.toJson()).toList(),
       'photos': photos?.map((photo) => photo.toJson()).toList(),
     };
-  }
-
-  String formatDateWithTimezone(DateTime date) {
-    // Format the date and time parts
-    String formattedDate = "${date.year.toString().padLeft(4, '0')}-"
-        "${date.month.toString().padLeft(2, '0')}-"
-        "${date.day.toString().padLeft(2, '0')}T"
-        "${date.hour.toString().padLeft(2, '0')}:"
-        "${date.minute.toString().padLeft(2, '0')}:"
-        "${date.second.toString().padLeft(2, '0')}";
-
-    return "${formattedDate}Z";
   }
 }

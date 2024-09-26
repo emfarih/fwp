@@ -1,89 +1,92 @@
-// import 'package:flutter/material.dart';
-// import 'package:fwp/features/clm/data/models/checklist.dart';
-// import 'package:fwp/features/clm/presentation/view_models/checklist_detail_view_model.dart';
-// import 'package:fwp/features/clm/presentation/widgets/clm_list_tile.dart'; // Import CLMListTile
-// import 'package:fwp/routes.dart';
-// import 'package:provider/provider.dart';
-// import '../view_models/checklists_list_view_model.dart';
+import 'package:flutter/material.dart';
+import 'package:fwp/features/clm/data/models/checklist.dart';
+import 'package:fwp/features/clm/presentation/view_models/checklists_list_view_model.dart';
+import 'package:fwp/features/clm/presentation/widgets/clm_list_tile.dart';
+import 'package:provider/provider.dart';
 
-// class ChecklistsListScreen extends StatelessWidget {
-//   const ChecklistsListScreen({super.key});
+class ChecklistListScreen extends StatefulWidget {
+  const ChecklistListScreen({super.key});
 
-//   @override
-//   Widget build(BuildContext context) {
-//     // Retrieve the Checklist model from the arguments
-//     final Checklist checklist =
-//         ModalRoute.of(context)!.settings.arguments as Checklist;
+  @override
+  _ChecklistListScreenState createState() => _ChecklistListScreenState();
+}
 
-//     final viewModel = Provider.of<ChecklistListViewModel>(context);
+class _ChecklistListScreenState extends State<ChecklistListScreen> {
+  late ScrollController _scrollController;
 
-//     return Scaffold(
-//       appBar: AppBar(title: const Text('Checklists')),
-//       body: FutureBuilder<void>(
-//         future: viewModel.fetchChecklists(
-//           systemId: checklist.systemId,
-//           stationId: checklist.locationId,
-//           substationId: checklist.substationId,
-//         ),
-//         builder: (context, snapshot) {
-//           if (viewModel.isLoading) {
-//             print('Loading checklists...');
-//             return const Center(child: CircularProgressIndicator());
-//           }
-//           if (viewModel.errorMessage != null) {
-//             print('Error fetching checklists: ${viewModel.errorMessage}');
-//             return Center(child: Text(viewModel.errorMessage!));
-//           }
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
 
-//           print('Fetched ${viewModel.checklists.length} checklists');
+    // Fetch initial checklists
+    final checklist = ModalRoute.of(context)!.settings.arguments as Checklist;
+    print('ChecklistListScreen initialized with checklist: $checklist');
 
-//           // Check if the list is empty and show a message if it is
-//           if (viewModel.checklists.isEmpty) {
-//             return const Center(child: Text('No checklists found.'));
-//           }
+    final viewModel =
+        Provider.of<ChecklistListViewModel>(context, listen: false);
+    if (viewModel.checklists.isEmpty && !viewModel.isLoading) {
+      print(
+          'Fetching initial checklists for systemId: ${checklist.systemId}, locationId: ${checklist.locationId}, date: ${checklist.date}');
+      viewModel.fetchChecklists(
+          checklist.systemId!, checklist.locationId!, checklist.date!);
+    }
+  }
 
-//           return ListView.builder(
-//             itemCount: viewModel.checklists.length,
-//             itemBuilder: (context, index) {
-//               final checklistItem = viewModel.checklists[index];
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
-//               // Concatenated title with system and station/substation names
-//               final title = checklistItem.description ?? 'No Description';
+  @override
+  Widget build(BuildContext context) {
+    final viewModel = Provider.of<ChecklistListViewModel>(context);
 
-//               return CLMListTile(
-//                 title: title, // Concatenated title
-//                 onTap: () {
-//                   print('Tapped on checklist: $title');
-//                   final detailViewModel = Provider.of<ChecklistDetailViewModel>(
-//                       context,
-//                       listen: false);
-//                   detailViewModel.setSelectedChecklist(
-//                       checklistItem); // Set selectedChecklist here
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Checklists'),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Consumer<ChecklistListViewModel>(
+              builder: (context, viewModel, child) {
+                if (viewModel.isLoading && viewModel.checklists.isEmpty) {
+                  print('Loading initial checklists...');
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-//                   Navigator.pushNamed(
-//                       context,
-//                       AppRoutes
-//                           .checklistDetail // Replace with your detail route
-//                       );
-//                 },
-//               );
-//             },
-//           );
-//         },
-//       ),
-//       floatingActionButton: FloatingActionButton(
-//         onPressed: () {
-//           print('Navigating to add checklist screen');
-//           // Pass the checklist as arguments to the checklist_add route
-//           Navigator.pushNamed(
-//             context,
-//             AppRoutes.checklistAdd,
-//             arguments: checklist,
-//           );
-//         },
-//         tooltip: 'Add Checklist',
-//         child: const Icon(Icons.add), // Icon for FAB
-//       ),
-//     );
-//   }
-// }
+                if (viewModel.errorMessage != null) {
+                  print('Error: ${viewModel.errorMessage}');
+                  return Center(child: Text(viewModel.errorMessage!));
+                }
+
+                if (viewModel.checklists.isEmpty) {
+                  print('No checklists available.');
+                  return const Center(child: Text('No checklists available.'));
+                }
+
+                return ListView.builder(
+                  controller: _scrollController,
+                  itemCount: viewModel.checklists.length,
+                  itemBuilder: (context, index) {
+                    final checklist = viewModel.checklists[index];
+                    print('Rendering checklist: $checklist');
+                    return CLMListTile(
+                      title: checklist.title ?? 'No Title',
+                      onTap: () {
+                        print('Checklist selected: $checklist');
+                        // Handle checklist selection
+                      },
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

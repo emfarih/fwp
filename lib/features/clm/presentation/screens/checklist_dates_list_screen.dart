@@ -113,6 +113,23 @@ class _ChecklistDatesListScreenState extends State<ChecklistDatesListScreen> {
                   // Handle date selection logic
                   print(
                       'ChecklistDatesListScreen: Date selected: $checklistDate');
+
+                  // Retrieve the checklist object from the current context
+                  final checklist =
+                      ModalRoute.of(context)!.settings.arguments as Checklist;
+
+                  DateTime parsedDate = DateTime.parse(
+                      checklistDate); // Parse the string to DateTime
+                  // Set the checklist date to the selected date
+                  checklist.date = parsedDate;
+
+                  // Navigate to ChecklistListScreen, passing the updated checklist model
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes
+                        .checklistsList, // Assuming this is the route for ChecklistListScreen
+                    arguments: checklist, // Pass the updated checklist object
+                  );
                 },
               );
             },

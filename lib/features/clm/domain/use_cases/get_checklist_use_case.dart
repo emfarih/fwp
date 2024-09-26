@@ -2,46 +2,13 @@ import 'package:fwp/features/clm/data/models/checklist.dart';
 import 'package:fwp/features/clm/data/repositories/checklist_repository.dart';
 
 class GetChecklistUseCase {
-  final ChecklistRepository repository;
+  final ChecklistRepository checklistRepository;
 
-  GetChecklistUseCase(this.repository);
+  GetChecklistUseCase(this.checklistRepository);
 
-  Future<List<Checklist>> execute({
-    int? systemId,
-    int? stationId,
-    int? substationId,
-  }) async {
-    print('GetChecklistUseCase: Start fetching checklists with parameters: '
-        'systemId: $systemId, stationId: $stationId, substationId: $substationId');
-
-    try {
-      final checklists = await repository.getChecklists(
-            systemId: systemId,
-            stationId: stationId,
-            substationId: substationId,
-          ) ??
-          []; // Default to empty list if null
-
-      print(
-          'GetChecklistUseCase: Successfully fetched ${checklists.length} checklists');
-      return checklists;
-    } catch (e) {
-      print(
-          'GetChecklistUseCase: Error occurred while fetching checklists: $e');
-      rethrow; // Rethrow to allow further handling if needed
-    }
-  }
-
-  Future<Checklist> executeById(int id) async {
-    print('GetChecklistUseCase: Start fetching checklist with ID $id');
-    try {
-      final checklist = await repository.getChecklistById(id);
-      print('GetChecklistUseCase: Successfully fetched checklist with ID $id');
-      return checklist;
-    } catch (e) {
-      print(
-          'GetChecklistUseCase: Error occurred while fetching checklist with ID $id: $e');
-      rethrow; // Rethrow to allow further handling if needed
-    }
+  Future<List<Checklist>> getChecklists(
+      int systemId, int locationId, DateTime date) async {
+    return await checklistRepository.getChecklists(
+        systemId: systemId, locationId: locationId, date: date);
   }
 }

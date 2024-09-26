@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:fwp/features/clm/data/models/checklist.dart';
 import 'package:fwp/features/clm/data/models/checklist_template.dart';
+import 'package:fwp/features/clm/utils.dart';
 import 'package:fwp/shared/services/api_service.dart';
 
 class ChecklistRepository {
@@ -9,23 +10,26 @@ class ChecklistRepository {
   ChecklistRepository(this.apiService);
 
   // Fetch checklists based on optional query parameters
-  Future<List<Checklist>> getChecklists(
-      {int? systemId, int? stationId, int? substationId}) async {
+  Future<List<Checklist>> getChecklists({
+    required int systemId,
+    required int locationId,
+    required DateTime date,
+  }) async {
     print('ChecklistRepository: Start fetching checklists');
 
     // Prepare the query parameters
     final queryParams = <String, String>{};
-    if (systemId != null) {
-      queryParams['system_id'] = systemId.toString();
+    queryParams['system_id'] = systemId.toString();
+    if (locationId != null) {
+      queryParams['location_id'] = locationId.toString();
     }
-    if (stationId != null) {
-      queryParams['station_id'] = stationId.toString();
-    }
-    if (substationId != null) {
-      queryParams['substation_id'] = substationId.toString();
+    if (date != null) {
+      queryParams['date'] =
+          formatDateWithTimezone(date); // Format the date to ISO-8601 string
     }
 
     try {
+      // Perform API request with updated query parameters
       final response =
           await apiService.get('/clm/checklists', queryParams: queryParams);
       print(
@@ -41,6 +45,7 @@ class ChecklistRepository {
           throw Exception('Invalid data format: Expected a list');
         }
 
+        // Parse the checklists
         List<Checklist> parsedChecklists = [];
         for (var item in checklistsData) {
           print('ChecklistRepository: Checking item: $item');
