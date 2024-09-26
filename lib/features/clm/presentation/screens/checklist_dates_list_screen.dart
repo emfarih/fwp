@@ -36,11 +36,10 @@ class _ChecklistDatesListScreenState extends State<ChecklistDatesListScreen> {
 
     final viewModel =
         Provider.of<ChecklistDatesListViewModel>(context, listen: false);
-    if (viewModel.checklistDates.isEmpty && !viewModel.isLoading) {
-      print(
-          'Fetching initial checklist dates for systemId: ${checklist.systemId}, locationId: ${checklist.locationId}');
-      viewModel.fetchChecklistDates(checklist.systemId!, checklist.locationId!);
-    }
+
+    print(
+        'Fetching initial checklist dates for systemId: ${checklist.systemId}, locationId: ${checklist.locationId}');
+    viewModel.fetchChecklistDates(checklist.systemId!, checklist.locationId!);
   }
 
   @override
