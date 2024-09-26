@@ -91,11 +91,17 @@ class ChecklistRepository {
   // Create a new checklist
   Future<bool> createChecklist(Checklist checklist) async {
     print('ChecklistRepository: Start creating checklist');
+
+    // Log the JSON representation of the checklist
+    final checklistJson = jsonEncode(checklist.toJson());
+    print('ChecklistRepository: JSON to be sent: $checklistJson');
+
     try {
       final response = await apiService.post(
         '/clm/checklists',
-        body: jsonEncode(checklist.toJson()),
+        body: checklistJson,
       );
+
       print(
           'ChecklistRepository: Received response with status code ${response.statusCode}');
 
@@ -134,15 +140,27 @@ class ChecklistRepository {
     }
   }
 
-  // Fetch checklist templates
-  Future<List<ChecklistTemplate>> getChecklistTemplates(
-      int limit, int offset) async {
+  Future<List<ChecklistTemplate>> getChecklistTemplates({
+    int? systemId,
+    int? locationId,
+    int limit = 10,
+    int offset = 0,
+  }) async {
     print(
-        'ChecklistRepository: Start fetching checklist templates with limit: $limit and offset: $offset');
+        'ChecklistRepository: Start fetching checklist templates with limit: $limit, offset: $offset, systemId: $systemId, locationId: $locationId');
+
     try {
-      // Include limit and offset in the API request
-      final response = await apiService
-          .get('/clm/checklist_templates?limit=$limit&offset=$offset');
+      // Build query parameters based on the presence of systemId and locationId
+      String query = '/clm/checklist_templates?limit=$limit&offset=$offset';
+      if (systemId != null) {
+        query += '&system_id=$systemId';
+      }
+      if (locationId != null) {
+        query += '&location_id=$locationId';
+      }
+
+      // Make the API request
+      final response = await apiService.get(query);
 
       print(
           'ChecklistRepository: Received response with status code ${response.statusCode}');
@@ -158,6 +176,7 @@ class ChecklistRepository {
           throw Exception('Invalid data format: Expected a list');
         }
 
+        // Parse checklist templates
         List<ChecklistTemplate> parsedTemplates = [];
         for (var item in templatesData) {
           print('ChecklistRepository: Checking item: $item');
@@ -226,24 +245,16 @@ class ChecklistRepository {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonData = jsonDecode(response.body);
-        final List<dynamic> datesData = jsonData['checklist_dates'];
+        final List<String> datesData = jsonData['checklist_dates'];
 
         print('ChecklistDatesRepository: Raw checklist dates data: $datesData');
-
-        if (datesData is! List) {
-          throw Exception('Invalid data format: Expected a list');
-        }
 
         // Extracting checklist dates as a list of strings
         List<String> checklistDates = [];
         for (var item in datesData) {
           print('ChecklistDatesRepository: Checking item: $item');
-          if (item is Map<String, dynamic>) {
-            // Assuming the date is under the key 'date' in the response
-            checklistDates.add(item['date'] as String);
-          } else {
-            print('ChecklistDatesRepository: Invalid item: $item');
-          }
+          // Assuming the date is under the key 'date' in the response
+          checklistDates.add(item);
         }
 
         print(

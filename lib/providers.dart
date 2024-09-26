@@ -15,6 +15,7 @@ import 'package:fwp/features/clm/domain/use_cases/get_systems_use_case.dart';
 import 'package:fwp/features/clm/domain/use_cases/get_checklist_templates_use_case.dart';
 import 'package:fwp/features/clm/domain/use_cases/get_checklist_use_case.dart';
 import 'package:fwp/features/clm/domain/use_cases/update_checklist_use_case.dart';
+import 'package:fwp/features/clm/presentation/view_models/checklist_add_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklist_dates_list_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklist_detail_view_model.dart';
 import 'package:fwp/features/clm/presentation/view_models/checklist_template_detail_view_model.dart';
@@ -151,6 +152,12 @@ class AppProvider {
       ChangeNotifierProvider<ChecklistDatesListViewModel>(
         create: (context) => ChecklistDatesListViewModel(
           Provider.of<GetChecklistDatesUseCase>(context, listen: false),
+        ),
+      ),
+      ChangeNotifierProvider<ChecklistAddViewModel>(
+        create: (context) => ChecklistAddViewModel(
+          Provider.of<GetChecklistTemplatesUseCase>(context, listen: false),
+          Provider.of<AddChecklistUseCase>(context, listen: false),
         ),
       ),
       ChangeNotifierProvider<ChecklistListViewModel>(

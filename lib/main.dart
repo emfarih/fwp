@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("Starting FWP version: 0.0.143");
     return MaterialApp(
       title: 'Your App Title',
       navigatorObservers: [MyNavigatorObserver()],

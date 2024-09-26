@@ -1,193 +1,177 @@
-// import 'package:flutter/material.dart';
-// import 'package:fwp/features/clm/data/models/checklist.dart';
-// import 'package:fwp/features/clm/data/models/checklist_item.dart';
-// import 'package:fwp/features/clm/domain/use_cases/add_checklist_use_case.dart';
-// import 'package:fwp/features/clm/presentation/view_models/checklist_add_view_model.dart';
-// import 'package:provider/provider.dart';
+import 'package:flutter/material.dart';
+import 'package:fwp/features/clm/data/models/checklist_template.dart';
+import 'package:fwp/features/clm/data/models/checklist.dart'; // Import Checklist model
+import 'package:fwp/features/clm/presentation/view_models/checklist_add_view_model.dart';
+import 'package:fwp/features/clm/presentation/view_models/checklist_dates_list_view_model.dart';
+import 'package:provider/provider.dart';
 
-// class ChecklistAddScreen extends StatelessWidget {
-//   const ChecklistAddScreen({super.key});
+class ChecklistAddScreen extends StatefulWidget {
+  @override
+  _ChecklistAddScreenState createState() => _ChecklistAddScreenState();
+}
 
-//   @override
-//   Widget build(BuildContext context) {
-//     print('ChecklistAddScreen: Building UI');
+class _ChecklistAddScreenState extends State<ChecklistAddScreen> {
+  DateTime selectedDate = DateTime.now();
 
-//     // Provide ChecklistAddViewModel scoped to this screen
-//     return ChangeNotifierProvider(
-//       create: (context) => ChecklistAddViewModel(
-//           Provider.of<AddChecklistUseCase>(context, listen: false)),
-//       child: Builder(
-//         builder: (context) {
-//           final viewModel = Provider.of<ChecklistAddViewModel>(context);
+  @override
+  void initState() {
+    super.initState();
+    final viewModel =
+        Provider.of<ChecklistAddViewModel>(context, listen: false);
 
-//           // Retrieve the checklist from the arguments
-//           final Checklist checklist =
-//               ModalRoute.of(context)!.settings.arguments as Checklist;
+    // Retrieve the checklist passed as an argument from the previous screen
+    final Checklist checklist =
+        ModalRoute.of(context)!.settings.arguments as Checklist;
 
-//           print('ChecklistAddScreen: Retrieved checklist $checklist');
+    print('ChecklistAddScreen initialized with checklist: $checklist');
 
-//           // Create a title based on systemId, stationId, and substationId
-//           final title =
-//               '${checklist.systemId} - ${checklist.locationId ?? checklist.substationId ?? "No Station/Substation"}';
+    // Fetch the checklist templates based on the systemId and locationId from the checklist
+    print(
+        'Fetching checklist templates for systemId: ${checklist.systemId}, locationId: ${checklist.locationId}');
+    viewModel.loadChecklistTemplates(
+      systemId: checklist.systemId!,
+      locationId: checklist.locationId!,
+    );
 
-//           print('ChecklistAddScreen: Generated title - $title');
+    // Set the default date in the view model
+    print('Setting initial date: $selectedDate');
+    viewModel.setDate(selectedDate);
+  }
 
-//           return Scaffold(
-//             appBar: AppBar(title: Text('Add Checklist - $title')),
-//             body: Padding(
-//               padding: const EdgeInsets.all(16.0),
-//               child: Column(
-//                 children: [
-//                   TextField(
-//                     decoration: const InputDecoration(labelText: 'Description'),
-//                     onChanged: (value) {
-//                       print('ChecklistAddScreen: Description changed - $value');
-//                       viewModel.description = value;
-//                     },
-//                   ),
-//                   const SizedBox(height: 20),
-//                   ElevatedButton(
-//                     style: ElevatedButton.styleFrom(
-//                       foregroundColor: Colors.white,
-//                       backgroundColor: Colors.redAccent,
-//                       padding: const EdgeInsets.symmetric(
-//                           horizontal: 20, vertical: 12),
-//                       shape: RoundedRectangleBorder(
-//                         borderRadius: BorderRadius.circular(10),
-//                       ),
-//                     ),
-//                     onPressed: () async {
-//                       print('ChecklistAddScreen: Opening Add Item Dialog');
-//                       await _showAddItemDialog(context, viewModel);
-//                     },
-//                     child: const Text(
-//                       'Add Checklist Item',
-//                       style: TextStyle(
-//                         color: Colors.white,
-//                         fontSize: 16,
-//                       ),
-//                     ),
-//                   ),
-//                   const SizedBox(height: 20),
-//                   Expanded(
-//                     child: ListView.builder(
-//                       itemCount: viewModel.checklistItems.length,
-//                       itemBuilder: (context, index) {
-//                         final item = viewModel.checklistItems[index];
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (pickedDate != null && pickedDate != selectedDate) {
+      setState(() {
+        selectedDate = pickedDate;
+      });
+      final viewModel =
+          Provider.of<ChecklistAddViewModel>(context, listen: false);
+      print('Date selected: $selectedDate');
+      viewModel.setDate(selectedDate);
+    } else {
+      print('Date selection was canceled or unchanged');
+    }
+  }
 
-//                         print(
-//                             'ChecklistAddScreen: Displaying checklist item - ${item?.description ?? "No Description"}');
+  @override
+  Widget build(BuildContext context) {
+    // Retrieve the checklist passed as an argument from the previous screen
+    final Checklist checklist =
+        ModalRoute.of(context)!.settings.arguments as Checklist;
 
-//                         return Padding(
-//                           padding: const EdgeInsets.symmetric(vertical: 8.0),
-//                           child: Card(
-//                             elevation: 4,
-//                             shape: RoundedRectangleBorder(
-//                               borderRadius: BorderRadius.circular(10),
-//                             ),
-//                             color: Colors.red[50],
-//                             child: ListTile(
-//                               leading: Icon(
-//                                 Icons.check_circle_outline,
-//                                 color: Colors.redAccent,
-//                               ),
-//                               title: Text(
-//                                 item.description ?? 'No Description',
-//                                 style: const TextStyle(
-//                                   fontSize: 16,
-//                                   fontWeight: FontWeight.w600,
-//                                 ),
-//                               ),
-//                               trailing: Icon(
-//                                 Icons.arrow_forward_ios,
-//                                 color: Colors.redAccent,
-//                                 size: 16,
-//                               ),
-//                             ),
-//                           ),
-//                         );
-//                       },
-//                     ),
-//                   )
-//                 ],
-//               ),
-//             ),
-//             floatingActionButton: FloatingActionButton(
-//               onPressed: () async {
-//                 print(
-//                     'ChecklistAddScreen: Submitting checklist - ${viewModel.description}');
-//                 if (await viewModel.submitChecklist(checklist)) {
-//                   print('ChecklistAddScreen: Checklist added successfully');
-//                   Navigator.pop(context); // Return to the previous screen
-//                 } else {
-//                   print('ChecklistAddScreen: Failed to add checklist');
-//                   ScaffoldMessenger.of(context).showSnackBar(
-//                     const SnackBar(content: Text('Failed to add checklist')),
-//                   );
-//                 }
-//               },
-//               backgroundColor: Colors.redAccent,
-//               child: const Icon(Icons.add),
-//               tooltip: 'Add Checklist',
-//             ),
-//           );
-//         },
-//       ),
-//     );
-//   }
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Add Checklist'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Consumer<ChecklistAddViewModel>(
+          builder: (context, viewModel, child) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Display system and location information from the checklist
+                Text(
+                  'System ID: ${checklist.systemId}',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  'Location ID: ${checklist.locationId}',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
 
-//   Future<void> _showAddItemDialog(
-//       BuildContext context, ChecklistAddViewModel viewModel) async {
-//     final TextEditingController descriptionController = TextEditingController();
+                // Date field (defaults to today's date)
+                Text(
+                  'Date:',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                TextButton(
+                  onPressed: () => _selectDate(context),
+                  child: Text(
+                    '${selectedDate.toLocal()}'.split(' ')[0],
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(color: Theme.of(context).primaryColor),
+                  ),
+                ),
+                const SizedBox(height: 16),
 
-//     print('_showAddItemDialog: Opening dialog');
+                // Dropdown for checklist templates filtered by systemId and locationId
+                Text(
+                  'Checklist Template:',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                DropdownButton<ChecklistTemplate>(
+                  hint: const Text('Select a template'),
+                  value: viewModel.selectedTemplate,
+                  items: viewModel.templates
+                      .map((template) => DropdownMenuItem<ChecklistTemplate>(
+                            value: template,
+                            child: Text(template.title ?? 'No Title'),
+                          ))
+                      .toList(),
+                  onChanged: (template) {
+                    print('Template selected: $template');
+                    viewModel.setSelectedTemplate(template);
+                  },
+                ),
+                const SizedBox(height: 16),
 
-//     showDialog(
-//       context: context,
-//       builder: (context) {
-//         return AlertDialog(
-//           title: const Text('Add Checklist Item'),
-//           content: Column(
-//             mainAxisSize: MainAxisSize.min,
-//             children: [
-//               TextField(
-//                 controller: descriptionController,
-//                 decoration: const InputDecoration(labelText: 'Description'),
-//               ),
-//             ],
-//           ),
-//           actions: [
-//             TextButton(
-//               onPressed: () {
-//                 if (descriptionController.text.isNotEmpty) {
-//                   final checklistItem =
-//                       ChecklistItem(description: descriptionController.text);
-//                   print(
-//                       '_showAddItemDialog: Adding checklist item - ${checklistItem.description}');
-//                   viewModel.addChecklistItem(checklistItem);
-//                   print(
-//                       '_showAddItemDialog: Checklist item added successfully');
-//                   Navigator.of(context).pop();
-//                 } else {
-//                   print(
-//                       '_showAddItemDialog: Failed to add checklist item - Empty fields');
-//                   ScaffoldMessenger.of(context).showSnackBar(
-//                     const SnackBar(content: Text('Please fill in all fields')),
-//                   );
-//                 }
-//               },
-//               child: const Text('Add Item'),
-//             ),
-//             TextButton(
-//               onPressed: () {
-//                 print('_showAddItemDialog: Canceled adding checklist item');
-//                 Navigator.of(context).pop();
-//               },
-//               child: const Text('Cancel'),
-//             )
-//           ],
-//         );
-//       },
-//     );
-//   }
-// }
+                // Save button
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Theme.of(context).primaryColor, // Use theme color
+                  ),
+                  onPressed: () async {
+                    print('Save checklist button pressed');
+                    // Handle saving of the checklist using the selected date and template
+                    viewModel.systemId = checklist.systemId;
+                    viewModel.locationId = checklist.locationId;
+                    final success = await viewModel.saveChecklist();
+                    if (success) {
+                      print('Checklist added successfully');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text('Checklist added successfully!')),
+                      );
+                      final checklistDatesListViewModel =
+                          Provider.of<ChecklistDatesListViewModel>(context,
+                              listen: false);
+                      checklistDatesListViewModel.fetchChecklistDates(
+                          checklist.systemId!, checklist.locationId!);
+                      Navigator.pop(
+                          context, true); // Pop the screen after saving
+                    } else {
+                      print('Failed to add checklist');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to add checklist.')),
+                      );
+                    }
+                  },
+                  child: const Text(
+                    'Save Checklist',
+                    style: TextStyle(color: Colors.white), // White text
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+}

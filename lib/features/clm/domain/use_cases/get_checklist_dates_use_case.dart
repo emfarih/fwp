@@ -5,7 +5,9 @@ class GetChecklistDatesUseCase {
 
   GetChecklistDatesUseCase(this._checklistRepository);
 
-  Future<List<String>> call(int systemId, int locationId) {
-    return _checklistRepository.getChecklistDates(systemId, locationId);
+  Future<List<String>> call(int systemId, int locationId,
+      {required int limit, required int offset}) {
+    return _checklistRepository.getChecklistDates(systemId, locationId,
+        limit: limit, offset: offset);
   }
 }

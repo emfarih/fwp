@@ -7,7 +7,18 @@ class GetChecklistTemplatesUseCase {
 
   GetChecklistTemplatesUseCase(this.repository);
 
-  Future<List<ChecklistTemplate>> call(int limit, int offset) {
-    return repository.getChecklistTemplates(limit, offset);
+  Future<List<ChecklistTemplate>> call({
+    int? systemId,
+    int? locationId,
+    int limit = 10,
+    int offset = 0,
+  }) {
+    // Pass optional systemId, locationId, and pagination parameters to the repository
+    return repository.getChecklistTemplates(
+      systemId: systemId,
+      locationId: locationId,
+      limit: limit,
+      offset: offset,
+    );
   }
 }

@@ -80,14 +80,24 @@ class Checklist {
       'id': id,
       'system_id': systemId,
       'location_id': locationId,
-      'date': date?.toIso8601String(),
+      'date': date != null ? formatDateWithTimezone(date!) : null,
       'inspector_name': inspectorName,
       'title': title,
       'description': description,
-      'checklist_items': checklistItems
-          ?.map((item) => item.toJson())
-          .toList(), // Updated to lowercase
+      'checklist_items': checklistItems?.map((item) => item.toJson()).toList(),
       'photos': photos?.map((photo) => photo.toJson()).toList(),
     };
+  }
+
+  String formatDateWithTimezone(DateTime date) {
+    // Format the date and time parts
+    String formattedDate = "${date.year.toString().padLeft(4, '0')}-"
+        "${date.month.toString().padLeft(2, '0')}-"
+        "${date.day.toString().padLeft(2, '0')}T"
+        "${date.hour.toString().padLeft(2, '0')}:"
+        "${date.minute.toString().padLeft(2, '0')}:"
+        "${date.second.toString().padLeft(2, '0')}";
+
+    return "${formattedDate}Z";
   }
 }

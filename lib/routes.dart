@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fwp/features/aam/presentation/screen/login_screen.dart';
+import 'package:fwp/features/clm/presentation/screens/checklist_add_screen.dart';
 import 'package:fwp/features/clm/presentation/screens/checklist_dates_list_screen.dart';
 import 'package:fwp/features/clm/presentation/screens/checklist_detail_screen.dart';
 import 'package:fwp/features/clm/presentation/screens/checklist_template_add_screen.dart';
@@ -20,8 +21,8 @@ class AppRoutes {
   static const String systemsList = '/systems_list';
   static const String locationsList = '/locations_list';
   static const String checklistDatesList = '/checklist_dates_list';
-  static const String checklistsList = '/checklists_list';
   static const String checklistAdd = '/checklist_add';
+  static const String checklistsList = '/checklists_list';
   static const String checklistDetail = '/checklist_detail';
 
   static Map<String, WidgetBuilder> get routes {
@@ -35,6 +36,7 @@ class AppRoutes {
       systemsList: (context) => const SystemsListScreen(),
       locationsList: (context) => const LocationsListScreen(),
       checklistDatesList: (context) => const ChecklistDatesListScreen(),
+      checklistAdd: (context) => ChecklistAddScreen(),
       checklistDetail: (context) => const ChecklistDetailScreen(),
     };
   }

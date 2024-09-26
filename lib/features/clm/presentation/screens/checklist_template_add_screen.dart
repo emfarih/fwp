@@ -135,6 +135,7 @@ class ChecklistTemplateAddScreen extends StatelessWidget {
                     await addViewModel.addChecklistTemplate(newTemplate);
 
                 if (success) {
+                  listViewModel.reset();
                   listViewModel.fetchChecklistTemplates();
                   print(
                       'ChecklistTemplateAddScreen: Checklist template added successfully');

@@ -4,7 +4,7 @@ import 'package:fwp/features/aam/data/services/token_storage_service.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  // final String baseUrl = "http://141.11.25.61/clm";
+  // final String baseUrl = "http://141.11.25.61";
   final String baseUrl = "http://localhost";
   final TokenStorageService tokenStorageService;
 

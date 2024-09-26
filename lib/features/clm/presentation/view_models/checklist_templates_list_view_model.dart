@@ -28,7 +28,8 @@ class ChecklistTemplatesListViewModel extends ChangeNotifier {
 
     try {
       // Fetch templates from the use case with limit and offset
-      final templates = await getChecklistTemplatesUseCase.call(limit, offset);
+      final templates =
+          await getChecklistTemplatesUseCase.call(limit: limit, offset: offset);
 
       if (templates.isNotEmpty) {
         _checklistTemplates
