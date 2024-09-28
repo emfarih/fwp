@@ -20,6 +20,12 @@ class _ChecklistTemplatesListScreenState
   void initState() {
     super.initState();
     _scrollController = ScrollController();
+    final viewModel = Provider.of<ChecklistTemplatesListViewModel>(context);
+
+    // Fetch checklist templates only if not already loaded
+    if (viewModel.checklistTemplates.isEmpty && !viewModel.isLoading) {
+      viewModel.fetchChecklistTemplates();
+    }
 
     // Add a listener to the scroll controller
     _scrollController.addListener(() {
@@ -48,13 +54,7 @@ class _ChecklistTemplatesListScreenState
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<ChecklistTemplatesListViewModel>(context);
     final authViewModel = Provider.of<AuthViewModel>(context);
-
-    // Fetch checklist templates only if not already loaded
-    if (viewModel.checklistTemplates.isEmpty && !viewModel.isLoading) {
-      viewModel.fetchChecklistTemplates();
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -65,30 +65,30 @@ class _ChecklistTemplatesListScreenState
             icon: const Icon(Icons.logout),
             tooltip: 'Logout',
             onPressed: () async {
-              await authViewModel.logout(); // Call the logout method
-              Navigator.pushReplacementNamed(
-                  context, AppRoutes.login); // Navigate to login
+              await authViewModel.logout();
+              Navigator.pushReplacementNamed(context, AppRoutes.login);
             },
           ),
         ],
       ),
       body: Consumer<ChecklistTemplatesListViewModel>(
         builder: (context, viewModel, child) {
+          print(
+              'ChecklistTemplatesListScreenInsideConsumer: isLoading = ${viewModel.isLoading}, isLastPage = ${viewModel.isLastPage}, templates count = ${viewModel.checklistTemplates.length}');
           if (viewModel.isLoading && viewModel.checklistTemplates.isEmpty) {
             return Center(child: CircularProgressIndicator());
           } else if (viewModel.errorMessage != null) {
             return Center(child: Text('Error: ${viewModel.errorMessage}'));
+          } else if (viewModel.checklistTemplates.isEmpty &&
+              !viewModel.isLoading) {
+            return Center(child: Text('No checklist templates available.'));
           } else {
             final templates = viewModel.checklistTemplates;
             return ListView.builder(
-              controller: _scrollController, // Set the scroll controller
-              itemCount: templates.length +
-                  (viewModel.isLoading
-                      ? 1
-                      : 0), // Show loading indicator if loading more
+              controller: _scrollController,
+              itemCount: templates.length + (viewModel.isLoading ? 1 : 0),
               itemBuilder: (context, index) {
                 if (index == templates.length) {
-                  // Show a loading indicator at the bottom
                   return const Center(child: CircularProgressIndicator());
                 }
 
@@ -97,19 +97,14 @@ class _ChecklistTemplatesListScreenState
                   title: template.title ?? 'No Title',
                   subtitle: template.description ?? 'No Description',
                   onTap: () {
-                    print('Tapped on checklist template: ${template.title}');
                     final checklistTemplateDetailViewModel =
                         Provider.of<ChecklistTemplateDetailViewModel>(context,
                             listen: false);
                     checklistTemplateDetailViewModel
-                        .setSelectedChecklistTemplate(
-                            template); // Set selectedChecklist here
+                        .setSelectedChecklistTemplate(template);
 
                     Navigator.pushNamed(
-                        context,
-                        AppRoutes
-                            .checklistTemplateDetail // Replace with your detail route
-                        );
+                        context, AppRoutes.checklistTemplateDetail);
                   },
                 );
               },
@@ -119,7 +114,6 @@ class _ChecklistTemplatesListScreenState
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Handle adding a new checklist template
           Navigator.pushNamed(context, AppRoutes.checklistTemplateAdd);
         },
         child: Icon(Icons.add),

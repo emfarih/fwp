@@ -15,6 +15,7 @@ class ChecklistListScreen extends StatefulWidget {
 
 class _ChecklistListScreenState extends State<ChecklistListScreen> {
   late ScrollController _scrollController;
+  late ChecklistListViewModel _viewModel; // Store the ViewModel instance
 
   @override
   void initState() {
@@ -25,25 +26,23 @@ class _ChecklistListScreenState extends State<ChecklistListScreen> {
     final checklist = ModalRoute.of(context)!.settings.arguments as Checklist;
     print('ChecklistListScreen initialized with checklist: $checklist');
 
-    final viewModel =
-        Provider.of<ChecklistListViewModel>(context, listen: false);
-    if (viewModel.checklists.isEmpty && !viewModel.isLoading) {
-      print(
-          'Fetching initial checklists for systemId: ${checklist.systemId}, locationId: ${checklist.locationId}, date: ${checklist.date}');
-      viewModel.fetchChecklists(
-          checklist.systemId!, checklist.locationId!, checklist.date!);
-    }
+    _viewModel = Provider.of<ChecklistListViewModel>(context, listen: false);
+    print(
+        'Fetching initial checklists for systemId: ${checklist.systemId}, locationId: ${checklist.locationId}, date: ${checklist.date}');
+    _viewModel.fetchChecklists(
+        checklist.systemId!, checklist.locationId!, checklist.date!);
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _viewModel.resetChecklists();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<ChecklistListViewModel>(context);
+    _viewModel = Provider.of<ChecklistListViewModel>(context);
 
     return Scaffold(
       appBar: AppBar(
